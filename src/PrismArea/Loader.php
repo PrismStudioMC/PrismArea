@@ -28,7 +28,7 @@ class Loader extends PluginBase
         $this->saveDefaultConfig();
 
         @mkdir(Path::join($this->getDataFolder(), "lang"), 0777, true);
-        $this->saveResource("lang/en_US.ini", true);
+        $this->saveResource("lang/en_US.ini");
         $this->saveResource("pack.zip");
     }
 
