@@ -185,6 +185,7 @@ class WorldListener implements Listener
             return; // Area allows hunger loss, nothing to do
         }
 
-        $ev->setAmount(200); // Prevent hunger loss
+        $player->getHungerManager()->setFood(20);
+        $player->getHungerManager()->setSaturation(20);
     }
 }

@@ -162,20 +162,18 @@ class Session
         $player = $this->getPlayer();
 
         $newAbilities = [];
-        if(!$this->player->isCreative()) {
-            $area = AreaManager::getInstance()->find($player->getPosition());
-            if($area !== null) {
-                $newAbilities = [
-                    AbilitiesLayer::ABILITY_BUILD => $area->hasFlag(AreaFlag::PLAYER_BUILD),
-                    AbilitiesLayer::ABILITY_MINE => $area->hasFlag(AreaFlag::PLAYER_BREAK),
-                    AbilitiesLayer::ABILITY_OPEN_CONTAINERS => $area->hasFlag(AreaFlag::PLAYER_CONTAINERS),
-                    AbilitiesLayer::ABILITY_ATTACK_PLAYERS => $area->hasFlag(AreaFlag::WORLD_ATTACK_PLAYERS),
-                    AbilitiesLayer::ABILITY_ATTACK_MOBS => $area->hasFlag(AreaFlag::WORLD_ATTACK_MOBS),
-                    AbilitiesLayer::ABILITY_DOORS_AND_SWITCHES => $area->hasFlag(AreaFlag::RIGHT_CLICK),
-                    AbilitiesLayer::ABILITY_LIGHTNING => $area->hasFlag(AreaFlag::PLAYER_DROP), // hack for drop items
-                    AbilitiesLayer::ABILITY_OPERATOR => false, // If this is set to true, the player will have operator permissions in the area
-                ];
-            }
+        $area = AreaManager::getInstance()->find($player->getPosition());
+        if($area !== null) {
+            $newAbilities = [
+                AbilitiesLayer::ABILITY_BUILD => $area->can(AreaFlag::PLAYER_BUILD, $player),
+                AbilitiesLayer::ABILITY_MINE => $area->can(AreaFlag::PLAYER_BREAK, $player),
+                AbilitiesLayer::ABILITY_OPEN_CONTAINERS => $area->can(AreaFlag::PLAYER_CONTAINERS, $player),
+                AbilitiesLayer::ABILITY_ATTACK_PLAYERS => $area->can(AreaFlag::WORLD_ATTACK_PLAYERS, $player),
+                AbilitiesLayer::ABILITY_ATTACK_MOBS => $area->can(AreaFlag::WORLD_ATTACK_MOBS, $player),
+                AbilitiesLayer::ABILITY_DOORS_AND_SWITCHES => $area->can(AreaFlag::RIGHT_CLICK, $player),
+                AbilitiesLayer::ABILITY_LIGHTNING => $area->can(AreaFlag::PLAYER_DROP, $player), // hack for drop items
+                AbilitiesLayer::ABILITY_OPERATOR => false, // If this is set to true, the player will have operator permissions in the area
+            ];
         }
 
         if($newAbilities === $this->abilities) {

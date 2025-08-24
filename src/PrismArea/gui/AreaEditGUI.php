@@ -2,8 +2,6 @@
 
 namespace PrismArea\gui;
 
-use pocketmine\block\utils\DyeColor;
-use pocketmine\block\VanillaBlocks;
 use pocketmine\inventory\Inventory;
 use pocketmine\inventory\transaction\action\DropItemAction;
 use pocketmine\item\Item;
@@ -201,12 +199,6 @@ class AreaEditGUI
                     );
                 }
             }
-        }
-
-        // Fill the remaining slots with empty items
-        $glass = VanillaBlocks::STAINED_GLASS_PANE()->setColor(DyeColor::GRAY())->asItem()->setCustomName("§r");
-        while ($index < $inv->getSize()) {
-            $inv->setItem($index++, $glass);
         }
 
         $list = VanillaItems::BOOK()

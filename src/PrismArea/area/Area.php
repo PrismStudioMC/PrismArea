@@ -124,9 +124,17 @@ class Area implements \JsonSerializable
             return true;
         }
 
-        // Check if the entity has permission for the flag
-        if($entity instanceof Player && $entity->hasPermission($perm)) {
-            return true;
+        if($entity instanceof Player) {
+            // Check if the player has permission for the flag
+            $perm = "prism.area." . strtolower($this->name) . "." . $flag instanceof AreaFlag ? "flag" : "subflag" . "." . strtolower($flag->name);
+            if($entity->hasPermission($perm)) {
+                return true; // Player has permission for the flag
+            }
+
+            // Check if the player has the global permission for the flag
+            if($entity->isCreative()) {
+                return true; // Creative players bypass area flags
+            }
         }
 
         // Check if the flag is set

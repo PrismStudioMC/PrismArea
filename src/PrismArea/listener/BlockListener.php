@@ -36,9 +36,7 @@ class BlockListener implements Listener
     public function __construct(
         protected readonly Loader      $loader,
         protected readonly AreaManager $areaManager
-    )
-    {
-    }
+    ) {}
 
     /**
      * @param BlockBurnEvent $ev

@@ -221,7 +221,7 @@ class PlayerListener implements Listener
          * @var mixed $k index of the transaction
          * @var Block $block
          */
-        foreach ($transaction as $k => [,,, $block]) {
+        foreach ($transaction->getBlocks() as $_ => [,,, $block]) {
             $area = $this->areaManager->find($block->getPosition());
             if ($area === null) {
                 continue; // No area found, nothing to do

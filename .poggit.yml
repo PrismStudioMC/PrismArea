@@ -5,4 +5,9 @@ branches:
 projects:
   PrismArea:
     path: ""
+    libs:
+      - src: muqsit/invmenu/invmenu
+        version: ^4.7.3
+    lint:
+      phpstan: false
 ...
