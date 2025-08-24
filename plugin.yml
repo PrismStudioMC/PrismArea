@@ -1,0 +1,13 @@
+name: PrismArea
+version: 1.0.0
+api: 5.0.0
+main: PrismArea\Loader
+authors:
+  - Zwuiix
+depend:
+  - EasyEdit
+
+permissions:
+  prism.area.*:
+    description: Allows the player to manage Areas.
+    default: op

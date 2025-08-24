@@ -1,0 +1,7 @@
+# Prism Studio - Area
+# This file is used to configure the Area of Prism Studio.
+
+# Uses an additional client-side mechanism
+use-abilities: true
+command-completion: true
+send-messages: true
