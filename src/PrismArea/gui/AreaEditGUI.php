@@ -2,10 +2,6 @@
 
 namespace PrismArea\gui;
 
-use muqsit\invmenu\InvMenu;
-use muqsit\invmenu\transaction\InvMenuTransaction;
-use muqsit\invmenu\transaction\InvMenuTransactionResult;
-use muqsit\invmenu\type\InvMenuTypeIds;
 use pocketmine\block\utils\DyeColor;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\inventory\Inventory;
@@ -14,6 +10,10 @@ use pocketmine\item\Item;
 use pocketmine\item\VanillaItems;
 use PrismArea\area\Area;
 use PrismArea\area\AreaManager;
+use PrismArea\libs\muqsit\invmenu\InvMenu;
+use PrismArea\libs\muqsit\invmenu\transaction\InvMenuTransaction;
+use PrismArea\libs\muqsit\invmenu\transaction\InvMenuTransactionResult;
+use PrismArea\libs\muqsit\invmenu\type\InvMenuTypeIds;
 use PrismArea\session\Session;
 use PrismArea\types\AreaFlag;
 use PrismArea\types\AreaSubFlag;

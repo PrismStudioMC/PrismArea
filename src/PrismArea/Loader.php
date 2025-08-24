@@ -2,7 +2,6 @@
 
 namespace PrismArea;
 
-use muqsit\invmenu\InvMenuHandler;
 use pocketmine\plugin\PluginBase;
 use pocketmine\resourcepacks\ResourcePack;
 use pocketmine\resourcepacks\ResourcePackManager;
@@ -10,6 +9,7 @@ use pocketmine\utils\SingletonTrait;
 use PrismArea\area\AreaManager;
 use PrismArea\command\AreaCommand;
 use PrismArea\lang\LangManager;
+use PrismArea\libs\muqsit\invmenu\InvMenuHandler;
 use PrismArea\listener\AbilitiesListener;
 use PrismArea\listener\BlockListener;
 use PrismArea\listener\CommandListener;
