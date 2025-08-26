@@ -6,7 +6,6 @@ use platz1de\EasyEdit\command\exception\NoSelectionException;
 use platz1de\EasyEdit\math\BlockVector;
 use platz1de\EasyEdit\session\Session;
 use platz1de\EasyEdit\session\SessionManager as SManager;
-use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\math\AxisAlignedBB;
 use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;

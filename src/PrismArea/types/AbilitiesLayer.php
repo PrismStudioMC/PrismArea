@@ -13,7 +13,7 @@ final class AbilitiesLayer
 
     public const ABILITY_BUILD = 0;
     public const ABILITY_MINE = 1;
-    public const ABILITY_DOORS_AND_SWITCHES = 2; //disabling this also disables dropping items (???)
+    public const RIGHT_CLICK = 2; //disabling this also disables dropping items (???)
     public const ABILITY_OPEN_CONTAINERS = 3;
     public const ABILITY_ATTACK_PLAYERS = 4;
     public const ABILITY_ATTACK_MOBS = 5;

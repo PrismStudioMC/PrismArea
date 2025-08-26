@@ -16,6 +16,7 @@ use pocketmine\player\Player;
 use pocketmine\utils\ObjectSet;
 use PrismArea\area\Area;
 use PrismArea\area\AreaManager;
+use PrismArea\events\PlayerRecalculateAbilitiesEvent;
 use PrismArea\lang\Lang;
 use PrismArea\lang\LangManager;
 use PrismArea\Loader;
@@ -172,22 +173,25 @@ class Session
                 AbilitiesLayer::ABILITY_OPEN_CONTAINERS => $area->can(AreaFlag::PLAYER_CONTAINERS, $player),
                 AbilitiesLayer::ABILITY_ATTACK_PLAYERS => $area->can(AreaFlag::WORLD_ATTACK_PLAYERS, $player),
                 AbilitiesLayer::ABILITY_ATTACK_MOBS => $area->can(AreaFlag::WORLD_ATTACK_MOBS, $player),
-                AbilitiesLayer::ABILITY_DOORS_AND_SWITCHES => $area->can(AreaFlag::RIGHT_CLICK, $player),
+                AbilitiesLayer::RIGHT_CLICK => $area->can(AreaFlag::RIGHT_CLICK, $player),
                 AbilitiesLayer::ABILITY_DROP => !$area->can(AreaFlag::PLAYER_DROP, $player), // hack for drop items
                 AbilitiesLayer::ABILITY_OPERATOR => false, // If this is set to true, the player will have operator permissions in the area
             ];
         }
 
+        $ev = new PlayerRecalculateAbilitiesEvent($player, $this->abilities, $newAbilities);
+        $ev->call();
+
         // If the new abilities are the same as the current abilities, we do not need to update anything
-        if ($newAbilities === $this->abilities) {
+        if ($ev->getNewAbilities() === $ev->getPrevAbilities()) {
             return;
         }
 
-        $prev = $this->abilities[AbilitiesLayer::ABILITY_DROP] ?? false;
-        $new = $newAbilities[AbilitiesLayer::ABILITY_DROP] ?? false;
+        $prev = $ev->getPrevAbilities()[AbilitiesLayer::ABILITY_DROP] ?? false;
+        $new = $ev->getNewAbilities()[AbilitiesLayer::ABILITY_DROP] ?? false;
 
         // Set the new abilities
-        $this->abilities = $newAbilities;
+        $this->abilities = $ev->getNewAbilities();
 
         // Check if the drop ability changed
         $needSync = $prev !== $new;
@@ -196,7 +200,7 @@ class Session
         }
 
         // If there are no new abilities, we just sync the current abilities
-        if (empty($newAbilities)) {
+        if (empty($ev->getNewAbilities())) {
             $player->getNetworkSession()->syncAbilities($player);
             return;
         }
@@ -205,7 +209,7 @@ class Session
             $player->hasPermission(DefaultPermissions::ROOT_OPERATOR) ? CommandPermissions::OPERATOR : CommandPermissions::NORMAL,
             PlayerPermissions::MEMBER,
             $player->getId(),
-            [new Layer(AbilitiesLayer::LAYER_BASE, $this->abilities, $player->getFlightSpeedMultiplier(), 1, 0.1)]
+            [new Layer(AbilitiesLayer::LAYER_BASE, $ev->getNewAbilities(), $player->getFlightSpeedMultiplier(), 1, 0.1)]
         ));
     }
 }

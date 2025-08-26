@@ -2,7 +2,6 @@
 
 namespace PrismArea\timings;
 
-use pocketmine\timings\Timings;
 use pocketmine\timings\TimingsHandler;
 use pocketmine\utils\SingletonTrait;
 use PrismArea\Loader;

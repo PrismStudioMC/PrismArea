@@ -15,7 +15,6 @@ use pocketmine\network\mcpe\protocol\types\BoolGameRule;
 use pocketmine\network\mcpe\protocol\types\inventory\ItemStackWrapper;
 use pocketmine\network\mcpe\protocol\UpdateAbilitiesPacket;
 use pocketmine\player\Player;
-use pocketmine\timings\Timings;
 use PrismAPI\item\ItemFactory;
 use PrismAPI\types\ItemLockMode;
 use PrismArea\Loader;

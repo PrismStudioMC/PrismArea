@@ -2,12 +2,14 @@
 
 namespace PrismArea;
 
+use DaPigGuy\PiggyFactions\PiggyFactions;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\SingletonTrait;
 use PrismAPI\Loader as PrismAPI;
 use PrismAPI\utils\ResourcePack;
 use PrismArea\area\AreaManager;
 use PrismArea\command\AreaCommand;
+use PrismArea\extensions\PiggyFactionsExtension;
 use PrismArea\lang\LangManager;
 use PrismArea\libs\muqsit\invmenu\InvMenuHandler;
 use PrismArea\listener\AbilitiesListener;
@@ -82,6 +84,8 @@ class Loader extends PluginBase
 
         $this->getServer()->getCommandMap()->register("area", new AreaCommand());
         ResourcePack::load(Path::join($this->getDataFolder(), "pack.zip")); // Load the resource pack
+
+        $this->loadExtensions(); // Load any extensions if available
     }
 
     /**
@@ -93,5 +97,13 @@ class Loader extends PluginBase
     public function onDisable(): void
     {
         AreaManager::getInstance()->close();
+    }
+
+    private function loadExtensions(): void
+    {
+        if(class_exists(PiggyFactions::class)) {
+            $this->getLogger()->info("PiggyFactions detected, loading PiggyFactions integration...");
+            $this->getServer()->getPluginManager()->registerEvents(new PiggyFactionsExtension(), $this);
+        }
     }
 }
