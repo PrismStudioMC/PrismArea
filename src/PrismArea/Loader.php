@@ -15,6 +15,7 @@ use PrismArea\listener\BlockListener;
 use PrismArea\listener\CommandListener;
 use PrismArea\listener\PlayerListener;
 use PrismArea\listener\WorldListener;
+use PrismArea\timings\TimingsManager;
 use Symfony\Component\Filesystem\Path;
 
 class Loader extends PluginBase
@@ -61,6 +62,9 @@ class Loader extends PluginBase
             InvMenuHandler::register($this);
         }
 
+        $timingsManager = TimingsManager::getInstance();
+        $timingsManager->load($this);
+
         $areaManager = AreaManager::getInstance();
         $areaManager->load(Path::join($this->getDataFolder(), "areas.json"));
 
@@ -71,9 +75,9 @@ class Loader extends PluginBase
         $this->getServer()->getPluginManager()->registerEvents(new WorldListener($this, $areaManager), $this);
         $this->getServer()->getPluginManager()->registerEvents(new BlockListener($this, $areaManager), $this);
 
-        if ($config->get("use-abilities", true)) {
+        if ($config->getNested("abilities.enabled", true)) {
             // Register the AbilitiesListener if the config option is enabled
-            new AbilitiesListener($this);
+            new AbilitiesListener($this, (int)$config->getNested("abilities.tick", 1));
         }
 
         $this->getServer()->getCommandMap()->register("area", new AreaCommand());

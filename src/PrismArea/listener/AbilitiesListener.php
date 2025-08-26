@@ -3,7 +3,6 @@
 namespace PrismArea\listener;
 
 use pocketmine\event\EventPriority;
-use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\network\mcpe\convert\TypeConverter;
@@ -12,16 +11,18 @@ use pocketmine\network\mcpe\protocol\InventoryContentPacket;
 use pocketmine\network\mcpe\protocol\PlayerAuthInputPacket;
 use pocketmine\network\mcpe\protocol\SetLocalPlayerAsInitializedPacket;
 use pocketmine\network\mcpe\protocol\types\AbilitiesData;
-use pocketmine\network\mcpe\protocol\types\AbilitiesLayer;
 use pocketmine\network\mcpe\protocol\types\BoolGameRule;
 use pocketmine\network\mcpe\protocol\types\inventory\ItemStackWrapper;
 use pocketmine\network\mcpe\protocol\UpdateAbilitiesPacket;
 use pocketmine\player\Player;
+use pocketmine\timings\Timings;
 use PrismAPI\item\ItemFactory;
 use PrismAPI\types\ItemLockMode;
 use PrismArea\Loader;
 use PrismArea\session\Session;
 use PrismArea\session\SessionManager;
+use PrismArea\timings\TimingsManager;
+use PrismArea\types\AbilitiesLayer;
 
 class AbilitiesListener
 {
@@ -35,6 +36,7 @@ class AbilitiesListener
      */
     public function __construct(
         protected readonly Loader $loader,
+        private readonly int      $tick,
     )
     {
         try {
@@ -153,27 +155,31 @@ class AbilitiesListener
      */
     private function processInventoryContent(Session $session, Player $player, InventoryContentPacket $pk): void
     {
-        if (!isset($session->getAbilities()[AbilitiesLayer::ABILITY_LIGHTNING])) {
-            return;
-        }
-
-        if ($session->getAbilities()[AbilitiesLayer::ABILITY_LIGHTNING]) {
-            // If the lightning ability is not enabled, we skip processing
-            return;
-        }
-
         $contents = $player->getInventory()->getContents(true);
         if (count($contents) !== count($pk->items)) {
             // If the number of items in the inventory does not match the number of items in the packet, we skip processing
             return;
         }
 
-        $converter = TypeConverter::getInstance();
-        for ($i = 0; $i < count($pk->items); $i++) {
-            $itemWrapper = $pk->items[$i];
+        $drop = $session->getAbilities()[AbilitiesLayer::ABILITY_DROP] ?? false;
+        if (!$drop) {
+            // If the player is allowed to drop items, we skip processing
+            return;
+        }
 
-            $item = TypeConverter::getInstance()->netItemStackToCore($itemWrapper->getItemStack());
-            $pk->items[$i] = new ItemStackWrapper($itemWrapper->getStackId(), $converter->coreItemStackToNet(ItemFactory::LOCK($item, ItemLockMode::FULL_INVENTORY)));
+        $timings = TimingsManager::getInstance()->getInventoryUpdate();
+        try {
+            $timings->startTiming(); // Start timing the inventory update
+
+            $converter = TypeConverter::getInstance();
+            for ($i = 0; $i < count($pk->items); $i++) {
+                $itemWrapper = $pk->items[$i];
+
+                $item = TypeConverter::getInstance()->netItemStackToCore($itemWrapper->getItemStack());
+                $pk->items[$i] = new ItemStackWrapper($itemWrapper->getStackId(), $converter->coreItemStackToNet(ItemFactory::LOCK($item, ItemLockMode::FULL_INVENTORY)));
+            }
+        } finally {
+            $timings->stopTiming(); // Stop timing the inventory update
         }
     }
 
@@ -219,14 +225,23 @@ class AbilitiesListener
             return;
         }
 
-        // Check if the player is in an area
-        // and recalculate abilities if necessary
-        $updateAbilitiesPacket = null;
-        $session->recalculateAbilities($updateAbilitiesPacket);
+        if ($pk->getTick() % $this->tick !== 0) {
+            return; // Process only every $this->tick ticks
+        }
 
-        if ($updateAbilitiesPacket !== null) {
-            $origin->sendDataPacket($updateAbilitiesPacket);
-            $player->getNetworkSession()->getInvManager()?->syncAll();
+        $timings = TimingsManager::getInstance()->getCalculatingAbilities();
+        $timings->startTiming(); // Start timing the ability calculation
+        try {
+            // Check if the player is in an area
+            // and recalculate abilities if necessary
+            $updateAbilitiesPacket = null;
+            $session->recalculateAbilities($updateAbilitiesPacket);
+
+            if ($updateAbilitiesPacket !== null) {
+                $origin->sendDataPacket($updateAbilitiesPacket);
+            }
+        } finally {
+            $timings->stopTiming(); // Stop timing the ability calculation
         }
     }
 }

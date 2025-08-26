@@ -7,7 +7,7 @@ use platz1de\EasyEdit\world\clientblock\ClientSideBlockManager;
 use platz1de\EasyEdit\world\clientblock\StructureBlockWindow;
 use pocketmine\network\mcpe\NetworkSession;
 use pocketmine\network\mcpe\protocol\types\AbilitiesData;
-use pocketmine\network\mcpe\protocol\types\AbilitiesLayer;
+use pocketmine\network\mcpe\protocol\types\AbilitiesLayer as Layer;
 use pocketmine\network\mcpe\protocol\types\command\CommandPermissions;
 use pocketmine\network\mcpe\protocol\types\PlayerPermissions;
 use pocketmine\network\mcpe\protocol\UpdateAbilitiesPacket;
@@ -19,6 +19,7 @@ use PrismArea\area\AreaManager;
 use PrismArea\lang\Lang;
 use PrismArea\lang\LangManager;
 use PrismArea\Loader;
+use PrismArea\types\AbilitiesLayer;
 use PrismArea\types\AreaFlag;
 use PrismArea\types\Translatable;
 
@@ -172,19 +173,31 @@ class Session
                 AbilitiesLayer::ABILITY_ATTACK_PLAYERS => $area->can(AreaFlag::WORLD_ATTACK_PLAYERS, $player),
                 AbilitiesLayer::ABILITY_ATTACK_MOBS => $area->can(AreaFlag::WORLD_ATTACK_MOBS, $player),
                 AbilitiesLayer::ABILITY_DOORS_AND_SWITCHES => $area->can(AreaFlag::RIGHT_CLICK, $player),
-                AbilitiesLayer::ABILITY_LIGHTNING => $area->can(AreaFlag::PLAYER_DROP, $player), // hack for drop items
+                AbilitiesLayer::ABILITY_DROP => !$area->can(AreaFlag::PLAYER_DROP, $player), // hack for drop items
                 AbilitiesLayer::ABILITY_OPERATOR => false, // If this is set to true, the player will have operator permissions in the area
             ];
         }
 
+        // If the new abilities are the same as the current abilities, we do not need to update anything
         if ($newAbilities === $this->abilities) {
             return;
         }
 
+        $prev = $this->abilities[AbilitiesLayer::ABILITY_DROP] ?? false;
+        $new = $newAbilities[AbilitiesLayer::ABILITY_DROP] ?? false;
+
+        // Set the new abilities
         $this->abilities = $newAbilities;
+
+        // Check if the drop ability changed
+        $needSync = $prev !== $new;
+        if ($needSync) { // If the drop ability changed, we need to sync the inventory
+            $player->getNetworkSession()->getInvManager()?->syncAll();
+        }
+
+        // If there are no new abilities, we just sync the current abilities
         if (empty($newAbilities)) {
             $player->getNetworkSession()->syncAbilities($player);
-            $player->getNetworkSession()->getInvManager()?->syncAll();
             return;
         }
 
@@ -192,15 +205,7 @@ class Session
             $player->hasPermission(DefaultPermissions::ROOT_OPERATOR) ? CommandPermissions::OPERATOR : CommandPermissions::NORMAL,
             PlayerPermissions::MEMBER,
             $player->getId(),
-            [
-                new AbilitiesLayer(
-                    AbilitiesLayer::LAYER_BASE,
-                    $this->abilities,
-                    $player->getFlightSpeedMultiplier(),
-                    1,
-                    0.1
-                )
-            ]
+            [new Layer(AbilitiesLayer::LAYER_BASE, $this->abilities, $player->getFlightSpeedMultiplier(), 1, 0.1)]
         ));
     }
 }

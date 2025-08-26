@@ -9,6 +9,7 @@ use pocketmine\utils\Filesystem;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\world\Position;
 use PrismArea\Loader;
+use PrismArea\timings\TimingsManager;
 use PrismArea\types\AreaFlag;
 use PrismArea\types\AreaSubFlag;
 
@@ -199,10 +200,16 @@ class AreaManager
         $chunkZ = $position->getFloorZ() >> 4;
         $chunkHash = "{$worldId}:{$chunkX}:{$chunkZ}";
 
-        foreach ($this->indexedAreas[$chunkHash] ?? [] as $_ => $area) {
-            if ($area->getAABB()->isVectorInside($position)) {
-                return $area;
+        $timings = TimingsManager::getInstance()->getSearchAreas();
+        $timings->startTiming(); // Start timing the area search
+        try {
+            foreach ($this->indexedAreas[$chunkHash] ?? [] as $_ => $area) {
+                if ($area->getAABB()->isVectorInside($position)) {
+                    return $area;
+                }
             }
+        } finally {
+            $timings->stopTiming(); // Stop timing the area search
         }
 
         return null;

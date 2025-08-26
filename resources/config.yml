@@ -1,7 +1,9 @@
 # Prism Studio - Area
 # This file is used to configure the Area of Prism Studio.
 
-# Uses an additional client-side mechanism
-use-abilities: true
 send-messages: true
 
+# Uses an additional client-side mechanism
+abilities:
+  enabled: true
+  tick: 1 # 20 = 1 second

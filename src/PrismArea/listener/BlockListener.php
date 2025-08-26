@@ -22,6 +22,7 @@ use pocketmine\world\BlockTransaction;
 use pocketmine\world\Position;
 use PrismArea\area\AreaManager;
 use PrismArea\Loader;
+use PrismArea\timings\TimingsManager;
 use PrismArea\types\AreaFlag;
 use PrismArea\types\AreaSubFlag;
 
@@ -281,15 +282,20 @@ class BlockListener implements Listener
             }
         };
 
-
-        if ($transaction) {
-            foreach ($blocks as $k => [, , , $block]) {
-                $processor($block);
+        $timings = TimingsManager::getInstance()->getBlocksProcessing();
+        $timings->startTiming(); // Start timing the block processing
+        try {
+            if ($transaction) {
+                foreach ($blocks as $k => [, , , $block]) {
+                    $processor($block);
+                }
+            } else {
+                foreach ($blocks as $k => $block) {
+                    $processor($block);
+                }
             }
-        } else {
-            foreach ($blocks as $k => $block) {
-                $processor($block);
-            }
+        } finally {
+            $timings->stopTiming(); // Stop timing the block processing
         }
     }
 }
