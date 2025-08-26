@@ -280,7 +280,7 @@ class AreaCommand extends PrismCommand
             case "visualize":
             {
                 if ($size !== 2) {
-                    $sender->sendMessage(TextFormat::RED . "Usage: /area edit <name>");
+                    $sender->sendMessage(TextFormat::RED . "Usage: /area visualize <name>");
                     return;
                 }
 
