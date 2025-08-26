@@ -29,7 +29,8 @@ class WorldListener implements Listener
     public function __construct(
         protected readonly Loader      $loader,
         protected readonly AreaManager $areaManager
-    ) {
+    )
+    {
         $this->sessionManager = SessionManager::getInstance();
     }
 
@@ -51,18 +52,18 @@ class WorldListener implements Listener
         }
 
         // Check if the area allows damage to entities
-        if($entity instanceof Player) {
-            if(!$area->hasFlag(AreaFlag::WORLD_ATTACK_PLAYERS)) {
-                if($damager instanceof Player) {
+        if ($entity instanceof Player) {
+            if (!$area->hasFlag(AreaFlag::WORLD_ATTACK_PLAYERS)) {
+                if ($damager instanceof Player) {
                     $this->sessionManager->getOrCreate($damager)
                         ->sendMessage(Translatable::WORLD_ATTACK_PLAYERS_DENIED, $entity->getName());
                 }
                 $ev->cancel();
                 return;
             }
-        } else if(!$area->hasFlag(AreaFlag::WORLD_ATTACK_MOBS)) {
+        } else if (!$area->hasFlag(AreaFlag::WORLD_ATTACK_MOBS)) {
             // Cancel damage to mobs if the area does not allow it
-            if($damager instanceof Player) {
+            if ($damager instanceof Player) {
                 $this->sessionManager->getOrCreate($damager)
                     ->sendMessage(Translatable::WORLD_ATTACK_MOBS_DENIED);
             }
@@ -88,13 +89,13 @@ class WorldListener implements Listener
         }
 
         // Check if the area allows damage to entities
-        if(!$area->hasSubFlag(AreaSubFlag::WORLD_DAMAGE_FALL) && $ev->getCause() === EntityDamageEvent::CAUSE_FALL) {
+        if (!$area->hasSubFlag(AreaSubFlag::WORLD_DAMAGE_FALL) && $ev->getCause() === EntityDamageEvent::CAUSE_FALL) {
             $ev->cancel();
             return; // Area does not allow fall damage
         }
 
         // Check if the area allows damage in general
-        if($area->hasFlag(AreaFlag::WORLD_DAMAGE)) {
+        if ($area->hasFlag(AreaFlag::WORLD_DAMAGE)) {
             return; // Area allows damage, nothing to do
         }
 
@@ -118,7 +119,7 @@ class WorldListener implements Listener
         }
 
         // Check if the area allows interaction with players or mobs
-        if($entity instanceof Player && !$area->can(AreaFlag::WORLD_INTERACT_PLAYERS, $player)) {
+        if ($entity instanceof Player && !$area->can(AreaFlag::WORLD_INTERACT_PLAYERS, $player)) {
             $this->sessionManager->getOrCreate($player)
                 ->sendMessage(Translatable::WORLD_INTERACT_PLAYERS_DENIED, $entity->getName());
             $ev->cancel();
@@ -126,7 +127,7 @@ class WorldListener implements Listener
         }
 
         // Check if the area allows interaction with mobs
-        if(!$area->can(AreaFlag::WORLD_INTERACT_MOBS, $player)) {
+        if (!$area->can(AreaFlag::WORLD_INTERACT_MOBS, $player)) {
             $this->sessionManager->getOrCreate($player)
                 ->sendMessage(Translatable::WORLD_INTERACT_MOBS_DENIED);
             $ev->cancel();
@@ -152,12 +153,12 @@ class WorldListener implements Listener
         }
 
         // Check if the area allows regeneration
-        if($area->can(AreaFlag::WORLD_REGENERATION, $entity)) {
+        if ($area->can(AreaFlag::WORLD_REGENERATION, $entity)) {
             return; // Area allows regeneration, nothing to do
         }
 
         // Check the cause of the health regain
-        if($cause === EntityRegainHealthEvent::CAUSE_MAGIC || $cause === EntityRegainHealthEvent::CAUSE_CUSTOM) {
+        if ($cause === EntityRegainHealthEvent::CAUSE_MAGIC || $cause === EntityRegainHealthEvent::CAUSE_CUSTOM) {
             return; // Magic or custom healing is allowed, nothing to do
         }
 
@@ -181,7 +182,7 @@ class WorldListener implements Listener
         }
 
         // Check if the area allows hunger loss
-        if($area->can(AreaFlag::WORLD_HUNGER_LOSS, $player)) {
+        if ($area->can(AreaFlag::WORLD_HUNGER_LOSS, $player)) {
             return; // Area allows hunger loss, nothing to do
         }
 

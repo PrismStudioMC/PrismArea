@@ -21,7 +21,7 @@ class SessionManager
     public function getOrCreate(Player $player): Session
     {
         $k = $player->getUniqueId()->toString();
-        if(isset($this->sessions[$k])) {
+        if (isset($this->sessions[$k])) {
             return $this->sessions[$k];
         }
 
@@ -36,7 +36,7 @@ class SessionManager
     public function close(Player $player): void
     {
         $k = $player->getUniqueId()->toString();
-        if(!isset($this->sessions[$k])) {
+        if (!isset($this->sessions[$k])) {
             throw new \InvalidArgumentException("Session for player {$player->getName()} does not exist.");
         }
 

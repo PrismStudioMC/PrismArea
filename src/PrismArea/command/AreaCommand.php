@@ -37,12 +37,12 @@ class AreaCommand extends PrismCommand
 
     /**
      * Builds the command overloads for the area command.
-     * @param CommandEnum[]           $hardcodedEnums
-     * @param CommandEnum[]           $softEnums
+     * @param CommandEnum[] $hardcodedEnums
+     * @param CommandEnum[] $softEnums
      * @param CommandEnumConstraint[] $enumConstraints
      * @return CommandOverload[]
      */
-    public function buildOverloads(array &$hardcodedEnums, array &$softEnums, array &$enumConstraints) : array
+    public function buildOverloads(array &$hardcodedEnums, array &$softEnums, array &$enumConstraints): array
     {
         return [
             new CommandOverload(chaining: false, parameters: [
@@ -91,7 +91,7 @@ class AreaCommand extends PrismCommand
      */
     public function execute(CommandSender $sender, string $commandLabel, array $args): void
     {
-        if(!$sender instanceof Player) {
+        if (!$sender instanceof Player) {
             $sender->sendMessage(TextFormat::RED . "You must be a player to use this command.");
             return;
         }
@@ -99,13 +99,13 @@ class AreaCommand extends PrismCommand
         $session = SessionManager::getInstance()->getOrCreate($sender);
 
         $size = count($args);
-        if($size < 1) {
+        if ($size < 1) {
             $sender->sendMessage(TextFormat::RED . "Usage: " . $this->getUsage());
             return;
         }
 
         $subCommand = strtolower(array_shift($args));
-        switch($subCommand) {
+        switch ($subCommand) {
             case "list":
             {
                 if ($size !== 1) {
@@ -168,7 +168,8 @@ class AreaCommand extends PrismCommand
                 $session->sendMessage(Translatable::AREA_COMMAND_CREATE_SUCCESS, $name);
                 break;
             }
-            case "delete": {
+            case "delete":
+            {
                 if ($size !== 2) {
                     $sender->sendMessage(TextFormat::RED . "Usage: /area delete <name>");
                     return;
@@ -190,7 +191,8 @@ class AreaCommand extends PrismCommand
                 $session->sendMessage(Translatable::AREA_COMMAND_DELETE_SUCCESS, $name);
                 break;
             }
-            case "prioritize": {
+            case "prioritize":
+            {
                 if ($size !== 3) {
                     $sender->sendMessage(TextFormat::RED . "Usage: /area prioritize <target> <reference>");
                     return;
@@ -224,7 +226,8 @@ class AreaCommand extends PrismCommand
                 $session->sendMessage(Translatable::AREA_COMMAND_PRIORITY_SUCCESS, $targetName, $referenceName);
                 break;
             }
-            case "edit": {
+            case "edit":
+            {
                 if ($size !== 2) {
                     $sender->sendMessage(TextFormat::RED . "Usage: /area edit <name>");
                     return;
@@ -246,7 +249,8 @@ class AreaCommand extends PrismCommand
                 $gui->send($sender);
                 break;
             }
-            case "copy": {
+            case "copy":
+            {
                 if ($size !== 3) {
                     $sender->sendMessage(TextFormat::RED . "Usage: /area copy <area1> <area2>");
                     return;
@@ -273,7 +277,8 @@ class AreaCommand extends PrismCommand
                 $session->sendMessage(Translatable::AREA_COMMAND_COPY_SUCCESS, $name1, $name2);
                 break;
             }
-            case "visualize": {
+            case "visualize":
+            {
                 if ($size !== 2) {
                     $sender->sendMessage(TextFormat::RED . "Usage: /area edit <name>");
                     return;
@@ -294,7 +299,8 @@ class AreaCommand extends PrismCommand
                 $session->visualize($area);
                 break;
             }
-            case "select": {
+            case "select":
+            {
                 if ($size !== 2) {
                     $sender->sendMessage(TextFormat::RED . "Usage: /area select <name>");
                     return;
@@ -331,7 +337,8 @@ class AreaCommand extends PrismCommand
                 $session->sendMessage(Translatable::AREA_COMMAND_SELECT_SUCCESS, $name);
                 break;
             }
-            case "unselect": {
+            case "unselect":
+            {
                 if ($size !== 2) {
                     $sender->sendMessage(TextFormat::RED . "Usage: /area unselect <name>");
                     return;
@@ -360,7 +367,7 @@ class AreaCommand extends PrismCommand
                 $pos1 = new BlockVector($aabb->minX, $aabb->minY, $aabb->minZ);
                 $pos2 = new BlockVector($aabb->maxX, $aabb->maxY, $aabb->maxZ);
 
-                if($selection->getPos1() !== $pos1 || $selection->getPos2() !== $pos2) {
+                if ($selection->getPos1() !== $pos1 || $selection->getPos2() !== $pos2) {
                     $session->sendMessage(Translatable::AREA_COMMAND_SELECTION_INVALID);
                     return;
                 }

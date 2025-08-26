@@ -34,8 +34,9 @@ class AbilitiesListener
      * @param Loader $loader The plugin loader instance.
      */
     public function __construct(
-        protected readonly Loader      $loader,
-    ) {
+        protected readonly Loader $loader,
+    )
+    {
         try {
             $this->loader->getServer()->getPluginManager()->registerEvent(
                 DataPacketReceiveEvent::class,
@@ -65,7 +66,7 @@ class AbilitiesListener
         $targets = $ev->getTargets();
 
         // Check if the event contains exactly one packet and one target
-        if(count($packets) !== 1 || count($targets) !== 1) {
+        if (count($packets) !== 1 || count($targets) !== 1) {
             return;
         }
 
@@ -75,18 +76,18 @@ class AbilitiesListener
 
         // Check if the origin is a player
         $player = $origin->getPlayer();
-        if($player === null) {
+        if ($player === null) {
             return;
         }
 
         // Get or create a session for the player
         $session = SessionManager::getInstance()->getOrCreate($player);
-        if($session->isClosed()) {
+        if ($session->isClosed()) {
             return;
         }
 
-        if($pk instanceof InventoryContentPacket) {
-            if($player->isCreative(true)) {
+        if ($pk instanceof InventoryContentPacket) {
+            if ($player->isCreative(true)) {
                 return;
             }
 
@@ -97,7 +98,7 @@ class AbilitiesListener
         }
 
         // Check if the packet is an UpdateAbilitiesPacket
-        if(!$pk instanceof UpdateAbilitiesPacket) {
+        if (!$pk instanceof UpdateAbilitiesPacket) {
             return;
         }
 
@@ -108,12 +109,12 @@ class AbilitiesListener
         // If the player is not in an area, we can skip further processing
         foreach ($layers as $layer) {
             // Skip if the layer is not the base layer
-            if($layer->getLayerId() !== AbilitiesLayer::LAYER_BASE) {
+            if ($layer->getLayerId() !== AbilitiesLayer::LAYER_BASE) {
                 continue;
             }
 
             // If the layer is the same as the session's abilities, we can skip further processing
-            if($layer === $session->getAbilities()) {
+            if ($layer === $session->getAbilities()) {
                 continue;
             }
 
@@ -123,7 +124,7 @@ class AbilitiesListener
             $session->recalculateAbilities($updateAbilitiesPacket);
 
             // If the recalculated abilities packet is not null, we update the session's abilities
-            if($updateAbilitiesPacket !== null) {
+            if ($updateAbilitiesPacket !== null) {
                 // Merge the new abilities with the existing ones
                 $newAbilities = array_merge(
                     $data->getAbilityLayers(),
@@ -152,17 +153,17 @@ class AbilitiesListener
      */
     private function processInventoryContent(Session $session, Player $player, InventoryContentPacket $pk): void
     {
-        if(!isset($session->getAbilities()[AbilitiesLayer::ABILITY_LIGHTNING])) {
+        if (!isset($session->getAbilities()[AbilitiesLayer::ABILITY_LIGHTNING])) {
             return;
         }
 
-        if($session->getAbilities()[AbilitiesLayer::ABILITY_LIGHTNING]) {
+        if ($session->getAbilities()[AbilitiesLayer::ABILITY_LIGHTNING]) {
             // If the lightning ability is not enabled, we skip processing
             return;
         }
 
         $contents = $player->getInventory()->getContents(true);
-        if(count($contents) !== count($pk->items)) {
+        if (count($contents) !== count($pk->items)) {
             // If the number of items in the inventory does not match the number of items in the packet, we skip processing
             return;
         }
@@ -189,18 +190,18 @@ class AbilitiesListener
 
         // Check if the origin is a player
         $player = $origin->getPlayer();
-        if($player === null) {
+        if ($player === null) {
             return;
         }
 
         // Get or create a session for the player
         $session = SessionManager::getInstance()->getOrCreate($player);
-        if($session->isClosed()) {
+        if ($session->isClosed()) {
             return;
         }
 
         // Check if the packet is a SetLocalPlayerAsInitializedPacket
-        if($pk instanceof SetLocalPlayerAsInitializedPacket) {
+        if ($pk instanceof SetLocalPlayerAsInitializedPacket) {
             // Remove yellow arrow in bottom_right of item
             $origin->sendDataPacket(GameRulesChangedPacket::create(["showtags" => new BoolGameRule(false, false)]));
             $player->addAttachment($this->loader, "prism.flag.*", true);
@@ -208,12 +209,12 @@ class AbilitiesListener
         }
 
         // Check if the packet is a PlayerAuthInputPacket
-        if(!$pk instanceof PlayerAuthInputPacket) {
+        if (!$pk instanceof PlayerAuthInputPacket) {
             return;
         }
 
         // PocketMine-MP wrong implementation for EyePos (its not always 1.62)
-        if($pk->getPosition()->distanceSquared($player->getEyePos()) < 0.0001) {
+        if ($pk->getPosition()->distanceSquared($player->getEyePos()) < 0.0001) {
             // If the player hasn't moved, we skip processing
             return;
         }
@@ -223,7 +224,7 @@ class AbilitiesListener
         $updateAbilitiesPacket = null;
         $session->recalculateAbilities($updateAbilitiesPacket);
 
-        if($updateAbilitiesPacket !== null) {
+        if ($updateAbilitiesPacket !== null) {
             $origin->sendDataPacket($updateAbilitiesPacket);
             $player->getNetworkSession()->getInvManager()?->syncAll();
         }

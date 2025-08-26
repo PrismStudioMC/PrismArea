@@ -16,7 +16,7 @@ class AreaManager
 {
     use SingletonTrait;
 
-    /** @var array<string, Area>  */
+    /** @var array<string, Area> */
     private array $areas = [];
     private array $indexedAreas = [];
 
@@ -57,7 +57,7 @@ class AreaManager
     {
         $this->dataFolder = $path;
 
-        if(!file_exists($this->dataFolder)) {
+        if (!file_exists($this->dataFolder)) {
             Loader::getInstance()->getLogger()->debug("Ignoring area data folder, because it does not exist: {$this->dataFolder}");
             return;
         }
@@ -129,7 +129,7 @@ class AreaManager
     public function delete(Area $area): void
     {
         $k = strtolower($area->getName());
-        if(!isset($this->areas[$k])) {
+        if (!isset($this->areas[$k])) {
             throw new \RuntimeException("Area '{$area->getName()}' not found.");
         }
 
@@ -221,7 +221,8 @@ class AreaManager
 
         $ordered = array_values($this->areas);
         usort($ordered, static function (Area $a, Area $b): int {
-            $pa = $a->getPriority(); $pb = $b->getPriority();
+            $pa = $a->getPriority();
+            $pb = $b->getPriority();
             return $pa === $pb
                 ? strcmp(strtolower($a->getName()), strtolower($b->getName()))
                 : ($pa <=> $pb); // ASC
@@ -234,7 +235,10 @@ class AreaManager
         // Find the index of the reference area
         $refIndex = null;
         foreach ($ordered as $i => $a) {
-            if ($a === $ref) { $refIndex = $i; break; }
+            if ($a === $ref) {
+                $refIndex = $i;
+                break;
+            }
         }
         if ($refIndex === null) return false;
 
@@ -288,7 +292,8 @@ class AreaManager
         if (empty($this->indexedAreas[$chunkHash])) return;
 
         usort($this->indexedAreas[$chunkHash], static function (Area $a, Area $b): int {
-            $pa = $a->getPriority(); $pb = $b->getPriority();
+            $pa = $a->getPriority();
+            $pb = $b->getPriority();
             return $pa === $pb
                 ? strcmp(strtolower($a->getName()), strtolower($b->getName()))
                 : ($pa <=> $pb);

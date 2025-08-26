@@ -36,7 +36,9 @@ class BlockListener implements Listener
     public function __construct(
         protected readonly Loader      $loader,
         protected readonly AreaManager $areaManager
-    ) {}
+    )
+    {
+    }
 
     /**
      * @param BlockBurnEvent $ev
@@ -55,7 +57,7 @@ class BlockListener implements Listener
      * @priority HIGHEST
      * @ignoreCancelled true
      */
-    public function handleBlockSpread(BlockSpreadEvent $ev) : void
+    public function handleBlockSpread(BlockSpreadEvent $ev): void
     {
         $this->processFlag($ev->getBlock()->getPosition(), AreaSubFlag::BLOCK_SPREAD, $ev);
     }
@@ -153,7 +155,7 @@ class BlockListener implements Listener
         $newBlocks = [];
 
         // Process the blocks in the transaction
-        $this->processBlocks($transaction->getBlocks(),$newBlocks, true);
+        $this->processBlocks($transaction->getBlocks(), $newBlocks, true);
 
         // Update the transaction with the new blocks
         $reflectionClass = new \ReflectionClass(BlockTransaction::class);
@@ -239,9 +241,9 @@ class BlockListener implements Listener
         }
 
         // Check if the area has the specified flag
-        if($flag instanceof AreaFlag && $area->hasFlag($flag)) {
+        if ($flag instanceof AreaFlag && $area->hasFlag($flag)) {
             return; // Allow the block action in this area
-        } else if($flag instanceof AreaSubFlag && $area->hasSubFlag($flag)) {
+        } else if ($flag instanceof AreaSubFlag && $area->hasSubFlag($flag)) {
             return; // Allow the block action in this area
         }
 
@@ -257,7 +259,7 @@ class BlockListener implements Listener
      */
     private function processBlocks(array $blocks, array &$data, bool $transaction = false): void
     {
-        $processor = function (Block $block) use(&$data) {
+        $processor = function (Block $block) use (&$data) {
             $added = true;
             try {
                 // Check if in an area
@@ -280,8 +282,8 @@ class BlockListener implements Listener
         };
 
 
-        if($transaction) {
-            foreach ($blocks as $k => [,,, $block]) {
+        if ($transaction) {
+            foreach ($blocks as $k => [, , , $block]) {
                 $processor($block);
             }
         } else {

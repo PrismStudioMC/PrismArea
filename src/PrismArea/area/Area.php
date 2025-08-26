@@ -35,7 +35,8 @@ class Area implements \JsonSerializable
         private readonly AxisAlignedBB $aabb,
         private array                  $flags = [],
         private array                  $subFlags = []
-    ) {
+    )
+    {
         $manager = PermissionManager::getInstance();
         foreach (AreaFlag::cases() as $k => $name) {
             $perm = "prism.area." . strtolower($this->name) . ".flag." . strtolower($name->name);
@@ -115,30 +116,30 @@ class Area implements \JsonSerializable
     public function can(AreaFlag|AreaSubFlag $flag, Entity $entity, Position $pos = null): bool
     {
         // Check if the entity is a player
-        if(is_null($pos) || $pos->equals(Vector3::zero())) {
+        if (is_null($pos) || $pos->equals(Vector3::zero())) {
             $pos = $entity->getPosition();
         }
 
         // Check if the entity is in the area
-        if(!$this->aabb->isVectorInside($pos)) {
+        if (!$this->aabb->isVectorInside($pos)) {
             return true;
         }
 
-        if($entity instanceof Player) {
+        if ($entity instanceof Player) {
             // Check if the player has permission for the flag
             $perm = "prism.area." . strtolower($this->name) . "." . $flag instanceof AreaFlag ? "flag" : "subflag" . "." . strtolower($flag->name);
-            if($entity->hasPermission($perm)) {
+            if ($entity->hasPermission($perm)) {
                 return true; // Player has permission for the flag
             }
 
             // Check if the player has the global permission for the flag
-            if($entity->isCreative(true)) {
+            if ($entity->isCreative(true)) {
                 return true; // Creative players bypass area flags
             }
         }
 
         // Check if the flag is set
-        if($flag instanceof AreaFlag) {
+        if ($flag instanceof AreaFlag) {
             return $this->hasFlag($flag);
         } else {
             return $this->hasSubFlag($flag);
@@ -223,7 +224,7 @@ class Area implements \JsonSerializable
 
         // Validate the name
         $world = Server::getInstance()->getWorldManager()->getWorldByName($data["world"] ?? throw new \RuntimeException("World not specified in area data."));
-        if($world === null) {
+        if ($world === null) {
             throw new \RuntimeException("World '{$data["world"]}' not loaded.");
         }
 

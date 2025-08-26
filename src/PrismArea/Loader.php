@@ -42,7 +42,7 @@ class Loader extends PluginBase
         $config = $this->getConfig();
 
         // Check if PrismAPI plugin is installed
-        if(!class_exists(PrismAPI::class)) {
+        if (!class_exists(PrismAPI::class)) {
             $this->getLogger()->error("PrismAPI plugin not found. Disabling PrismArea.");
             $this->getLogger()->error("You can download this API at https://github.com/PrismStudioMC/PrismAPI");
             $this->getServer()->getPluginManager()->disablePlugin($this);
@@ -50,14 +50,14 @@ class Loader extends PluginBase
         }
 
         // Check if InvMenu plugin is installed
-        if(!class_exists(InvMenuHandler::class)) {
+        if (!class_exists(InvMenuHandler::class)) {
             $this->getLogger()->error("InvMenu plugin not found. Please install it to use the area menu features.");
             $this->getServer()->getPluginManager()->disablePlugin($this);
             return;
         }
 
         // Check if InvMenuHandler is already registered
-        if(!InvMenuHandler::isRegistered()) {
+        if (!InvMenuHandler::isRegistered()) {
             InvMenuHandler::register($this);
         }
 
@@ -71,7 +71,7 @@ class Loader extends PluginBase
         $this->getServer()->getPluginManager()->registerEvents(new WorldListener($this, $areaManager), $this);
         $this->getServer()->getPluginManager()->registerEvents(new BlockListener($this, $areaManager), $this);
 
-        if($config->get("use-abilities", true)) {
+        if ($config->get("use-abilities", true)) {
             // Register the AbilitiesListener if the config option is enabled
             new AbilitiesListener($this);
         }

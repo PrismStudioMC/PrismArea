@@ -37,8 +37,9 @@ class Session
 
     public function __construct(
         private Player $player,
-    ) {
-        if(!$this->player->isConnected()) {
+    )
+    {
+        if (!$this->player->isConnected()) {
             throw new \InvalidArgumentException("Player must be connected to create a session.");
         }
 
@@ -55,7 +56,7 @@ class Session
          * @phpstan-var ObjectSet<\Closure() : void> $disposeHooks
          */
         $disposeHooks = $disposeHooksProperty->getValue($origin);
-        $disposeHooks->add(function(): void{
+        $disposeHooks->add(function (): void {
             $this->closed = true;
             SessionManager::getInstance()->close($this->player);
         });
@@ -108,12 +109,12 @@ class Session
      */
     public function sendMessage(Translatable $k, mixed ...$args): void
     {
-        if(!$this->sendMessages) {
+        if (!$this->sendMessages) {
             return;
         }
 
         // Check if the session is closed before sending a message
-        if($this->closed) {
+        if ($this->closed) {
             return; // Do not send messages if the session is closed
         }
 
@@ -163,7 +164,7 @@ class Session
 
         $newAbilities = [];
         $area = AreaManager::getInstance()->find($player->getPosition());
-        if($area !== null) {
+        if ($area !== null) {
             $newAbilities = [
                 AbilitiesLayer::ABILITY_BUILD => $area->can(AreaFlag::PLAYER_BUILD, $player),
                 AbilitiesLayer::ABILITY_MINE => $area->can(AreaFlag::PLAYER_BREAK, $player),
@@ -176,12 +177,12 @@ class Session
             ];
         }
 
-        if($newAbilities === $this->abilities) {
+        if ($newAbilities === $this->abilities) {
             return;
         }
 
         $this->abilities = $newAbilities;
-        if(empty($newAbilities)) {
+        if (empty($newAbilities)) {
             $player->getNetworkSession()->syncAbilities($player);
             $player->getNetworkSession()->getInvManager()?->syncAll();
             return;

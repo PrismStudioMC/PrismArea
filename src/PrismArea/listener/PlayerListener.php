@@ -53,7 +53,8 @@ class PlayerListener implements Listener
     public function __construct(
         protected readonly Loader      $loader,
         protected readonly AreaManager $areaManager
-    ) {
+    )
+    {
         $this->sessionManager = SessionManager::getInstance();
     }
 
@@ -79,7 +80,7 @@ class PlayerListener implements Listener
         $flag = AreaFlag::fromString(
             $action === PlayerInteractEvent::LEFT_CLICK_BLOCK ? 'left_click' : 'right_click'
         );
-        if(!$area->can($flag, $player, $block->getPosition())) {
+        if (!$area->can($flag, $player, $block->getPosition())) {
             $this->sessionManager->getOrCreate($player)
                 ->sendMessage(Translatable::AREA_INTERACT_DENIED);
             $ev->cancel();
@@ -90,7 +91,7 @@ class PlayerListener implements Listener
             case PlayerInteractEvent::LEFT_CLICK_BLOCK:
             {
                 // Handle left click interaction
-                if($area->can(AreaFlag::PLAYER_BREAK, $player, $block->getPosition())) {
+                if ($area->can(AreaFlag::PLAYER_BREAK, $player, $block->getPosition())) {
                     return; // Player can perform emotes, nothing to do
                 }
 
@@ -101,7 +102,7 @@ class PlayerListener implements Listener
             {
                 // Handle right click interaction
                 $placedBlock = $item->getBlock();
-                if(!$placedBlock instanceof Air && !$area->can(AreaFlag::PLAYER_BUILD, $player, $block->getPosition())) {
+                if (!$placedBlock instanceof Air && !$area->can(AreaFlag::PLAYER_BUILD, $player, $block->getPosition())) {
                     $this->sessionManager->getOrCreate($player)
                         ->sendMessage(Translatable::PLAYER_PLACE_DENIED);
                     $ev->cancel();
@@ -109,7 +110,7 @@ class PlayerListener implements Listener
                 }
 
                 // Check if the area allows player interaction
-                if(!$area->can(AreaFlag::PLAYER_INTERACT, $player, $block->getPosition())) {
+                if (!$area->can(AreaFlag::PLAYER_INTERACT, $player, $block->getPosition())) {
                     $this->sessionManager->getOrCreate($player)
                         ->sendMessage(Translatable::AREA_INTERACT_DENIED);
                     $ev->cancel();
@@ -138,15 +139,15 @@ class PlayerListener implements Listener
 
                 // Handle right click interaction
                 $tile = $block->getPosition()->getWorld()->getTile($block->getPosition());
-                if($tile === null) {
+                if ($tile === null) {
                     return; // No tile found, nothing to do
                 }
 
-                if(!$tile instanceof Container) {
+                if (!$tile instanceof Container) {
                     return; // Tile is not a container, nothing to do
                 }
 
-                if(!$area->can(AreaFlag::PLAYER_CONTAINERS, $player, $block->getPosition())) {
+                if (!$area->can(AreaFlag::PLAYER_CONTAINERS, $player, $block->getPosition())) {
                     $this->sessionManager->getOrCreate($player)
                         ->sendMessage(Translatable::PLAYER_CONTAINERS_DENIED, $block->getName());
                     $ev->cancel();
@@ -197,7 +198,7 @@ class PlayerListener implements Listener
             return; // No area found, nothing to do
         }
 
-        if($area->can(AreaFlag::PLAYER_BREAK, $player, $block->getPosition())) {
+        if ($area->can(AreaFlag::PLAYER_BREAK, $player, $block->getPosition())) {
             return;
         }
 
@@ -221,13 +222,13 @@ class PlayerListener implements Listener
          * @var mixed $k index of the transaction
          * @var Block $block
          */
-        foreach ($transaction->getBlocks() as $_ => [,,, $block]) {
+        foreach ($transaction->getBlocks() as $_ => [, , , $block]) {
             $area = $this->areaManager->find($block->getPosition());
             if ($area === null) {
                 continue; // No area found, nothing to do
             }
 
-            if(!$area->can(AreaFlag::PLAYER_BUILD, $player, $block->getPosition())) {
+            if (!$area->can(AreaFlag::PLAYER_BUILD, $player, $block->getPosition())) {
                 $this->sessionManager->getOrCreate($player)
                     ->sendMessage(Translatable::PLAYER_PLACE_DENIED);
                 $ev->cancel();
@@ -254,7 +255,7 @@ class PlayerListener implements Listener
         }
 
         // Check if the player can use items in the area
-        if(!$area->can(AreaFlag::PLAYER_USE_ITEMS, $player, $player->getPosition())) {
+        if (!$area->can(AreaFlag::PLAYER_USE_ITEMS, $player, $player->getPosition())) {
             $this->sessionManager->getOrCreate($player)
                 ->sendMessage(Translatable::PLAYER_USE_ITEMS_DENIED, $item->getName());
             $ev->cancel();
@@ -263,10 +264,10 @@ class PlayerListener implements Listener
 
         // Check for specific item types and their sub-flags
         $map = [
-            EnderPearl::class   => AreaSubFlag::PLAYER_USE_ITEMS_ENDER_PEARL,
-            Snowball::class     => AreaSubFlag::PLAYER_USE_ITEMS_SNOWBALL,
-            Egg::class          => AreaSubFlag::PLAYER_USE_ITEMS_EGG,
-            Potion::class       => AreaSubFlag::PLAYER_USE_ITEMS_POTIONS,
+            EnderPearl::class => AreaSubFlag::PLAYER_USE_ITEMS_ENDER_PEARL,
+            Snowball::class => AreaSubFlag::PLAYER_USE_ITEMS_SNOWBALL,
+            Egg::class => AreaSubFlag::PLAYER_USE_ITEMS_EGG,
+            Potion::class => AreaSubFlag::PLAYER_USE_ITEMS_POTIONS,
             SplashPotion::class => AreaSubFlag::PLAYER_USE_ITEMS_POTIONS,
         ];
 
@@ -300,7 +301,7 @@ class PlayerListener implements Listener
         }
 
         // Check if the player can drop items in the area
-        if($area->can(AreaFlag::PLAYER_DROP, $player, $player->getPosition())) {
+        if ($area->can(AreaFlag::PLAYER_DROP, $player, $player->getPosition())) {
             return; // Player can drop items, nothing to do
         }
 
@@ -320,7 +321,7 @@ class PlayerListener implements Listener
         $entity = $ev->getEntity();
 
         // Check if the entity is a player
-        if(!$entity instanceof Player) {
+        if (!$entity instanceof Player) {
             return; // Only handle player pickups
         }
 
@@ -331,7 +332,7 @@ class PlayerListener implements Listener
         }
 
         // Check if the player can pick up items in the area
-        if($area->can(AreaFlag::PLAYER_PICKUP, $entity, $entity->getPosition())) {
+        if ($area->can(AreaFlag::PLAYER_PICKUP, $entity, $entity->getPosition())) {
             return; // Player can pick up items, nothing to do
         }
 
@@ -359,7 +360,7 @@ class PlayerListener implements Listener
         }
 
         // Check if the player can use buckets in the area
-        if($area->can(AreaSubFlag::PLAYER_INTERACT_BUCKET, $player, $block->getPosition())) {
+        if ($area->can(AreaSubFlag::PLAYER_INTERACT_BUCKET, $player, $block->getPosition())) {
             return; // Player can use buckets, nothing to do
         }
 
@@ -385,7 +386,7 @@ class PlayerListener implements Listener
         }
 
         // Check if the player can perform emotes in the area
-        if($area->can(AreaFlag::PLAYER_EMOTES, $player, $player->getPosition())) {
+        if ($area->can(AreaFlag::PLAYER_EMOTES, $player, $player->getPosition())) {
             return;
         }
 
@@ -403,7 +404,7 @@ class PlayerListener implements Listener
         $player = $ev->getPlayer();
 
         // Check if the player is swimming
-        if(!$ev->isSwimming()) {
+        if (!$ev->isSwimming()) {
             return;
         }
 
@@ -414,7 +415,7 @@ class PlayerListener implements Listener
         }
 
         // Check if the player can perform emotes in the area
-        if($area->can(AreaFlag::PLAYER_EMOTE, $player, $player->getPosition())) {
+        if ($area->can(AreaFlag::PLAYER_EMOTE, $player, $player->getPosition())) {
             return;
         }
 

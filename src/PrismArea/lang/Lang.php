@@ -10,8 +10,10 @@ class Lang
     public function __construct(
         private string $code,
         private string $name,
-        private array $contents = []
-    ) {}
+        private array  $contents = []
+    )
+    {
+    }
 
     /**
      * @return string
@@ -50,8 +52,8 @@ class Lang
         $value = $this->contents[$text] ?? $text;
         $value = str_replace(["{LINE}", "{SPACE}"], ["\n", " "], $value);
 
-        if(!empty($args)) {
-            $formattedArgs = array_map(function($arg) {
+        if (!empty($args)) {
+            $formattedArgs = array_map(function ($arg) {
                 return is_float($arg) ? number_format($arg, 2, ',') : strval($arg);
             }, $args);
             $value = vsprintf($value, $formattedArgs);

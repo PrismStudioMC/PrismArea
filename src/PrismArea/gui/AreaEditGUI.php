@@ -170,7 +170,7 @@ class AreaEditGUI
 
             $subFlags = self::$subflagCache[$baseName] ?? [];
             if (empty($subFlags)) {
-                $inv->setItem($index++, $this->buildItem($item,$label . " " . ($status ? $on : $off), $lang->parse("area.edit.gui.default.lore")));
+                $inv->setItem($index++, $this->buildItem($item, $label . " " . ($status ? $on : $off), $lang->parse("area.edit.gui.default.lore")));
                 continue;
             }
 

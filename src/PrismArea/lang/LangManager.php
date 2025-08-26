@@ -83,7 +83,7 @@ class LangManager
      */
     public function getLang(string $langCode): Lang
     {
-        if(isset($this->langs[strtolower($langCode)])) {
+        if (isset($this->langs[strtolower($langCode)])) {
             return $this->langs[strtolower($langCode)];
         }
 
@@ -91,7 +91,7 @@ class LangManager
         $values = array_filter($split, fn($part) => str_starts_with($part, array_shift($split)));
         $fallbackCode = array_shift($values);
 
-        if(isset($this->langs[strtolower($fallbackCode)])) {
+        if (isset($this->langs[strtolower($fallbackCode)])) {
             // If the language is not found, return the fallback language
             return $this->langs[strtolower($fallbackCode)];
         }
