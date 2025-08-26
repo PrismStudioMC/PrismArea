@@ -3,6 +3,7 @@
 namespace PrismArea\listener;
 
 use pocketmine\event\EventPriority;
+use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\network\mcpe\convert\TypeConverter;
@@ -16,6 +17,8 @@ use pocketmine\network\mcpe\protocol\types\BoolGameRule;
 use pocketmine\network\mcpe\protocol\types\inventory\ItemStackWrapper;
 use pocketmine\network\mcpe\protocol\UpdateAbilitiesPacket;
 use pocketmine\player\Player;
+use PrismAPI\item\ItemFactory;
+use PrismAPI\types\ItemLockMode;
 use PrismArea\Loader;
 use PrismArea\session\Session;
 use PrismArea\session\SessionManager;
@@ -83,6 +86,10 @@ class AbilitiesListener
         }
 
         if($pk instanceof InventoryContentPacket) {
+            if($player->isCreative(true)) {
+                return;
+            }
+
             // If the packet is an InventoryContentPacket, process it
             // Its a hack for cancel drop items
             $this->processInventoryContent($session, $player, $pk);
@@ -165,9 +172,7 @@ class AbilitiesListener
             $itemWrapper = $pk->items[$i];
 
             $item = TypeConverter::getInstance()->netItemStackToCore($itemWrapper->getItemStack());
-            $item->getNamedTag()->setByte("minecraft:item_lock", 2);
-
-            $pk->items[$i] = new ItemStackWrapper($itemWrapper->getStackId(), $converter->coreItemStackToNet($item));
+            $pk->items[$i] = new ItemStackWrapper($itemWrapper->getStackId(), $converter->coreItemStackToNet(ItemFactory::LOCK($item, ItemLockMode::FULL_INVENTORY)));
         }
     }
 
@@ -204,6 +209,12 @@ class AbilitiesListener
 
         // Check if the packet is a PlayerAuthInputPacket
         if(!$pk instanceof PlayerAuthInputPacket) {
+            return;
+        }
+
+        // PocketMine-MP wrong implementation for EyePos (its not always 1.62)
+        if($pk->getPosition()->distanceSquared($player->getEyePos()) < 0.0001) {
+            // If the player hasn't moved, we skip processing
             return;
         }
 

@@ -101,7 +101,7 @@ class PlayerListener implements Listener
             {
                 // Handle right click interaction
                 $placedBlock = $item->getBlock();
-                if(!$placedBlock instanceof Air && $area->can(AreaFlag::PLAYER_BUILD, $player, $block->getPosition())) {
+                if(!$placedBlock instanceof Air && !$area->can(AreaFlag::PLAYER_BUILD, $player, $block->getPosition())) {
                     $this->sessionManager->getOrCreate($player)
                         ->sendMessage(Translatable::PLAYER_PLACE_DENIED);
                     $ev->cancel();

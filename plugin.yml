@@ -6,6 +6,8 @@ authors:
   - Zwuiix
 depend:
   - EasyEdit
+softdepend:
+  - PrismAPI
 
 permissions:
   prism.area.*:

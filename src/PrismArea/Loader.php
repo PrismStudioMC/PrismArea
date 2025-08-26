@@ -3,9 +3,9 @@
 namespace PrismArea;
 
 use pocketmine\plugin\PluginBase;
-use pocketmine\resourcepacks\ResourcePack;
-use pocketmine\resourcepacks\ResourcePackManager;
 use pocketmine\utils\SingletonTrait;
+use PrismAPI\Loader as PrismAPI;
+use PrismAPI\utils\ResourcePack;
 use PrismArea\area\AreaManager;
 use PrismArea\command\AreaCommand;
 use PrismArea\lang\LangManager;
@@ -15,7 +15,6 @@ use PrismArea\listener\BlockListener;
 use PrismArea\listener\CommandListener;
 use PrismArea\listener\PlayerListener;
 use PrismArea\listener\WorldListener;
-use ReflectionException;
 use Symfony\Component\Filesystem\Path;
 
 class Loader extends PluginBase
@@ -42,9 +41,18 @@ class Loader extends PluginBase
     {
         $config = $this->getConfig();
 
+        // Check if PrismAPI plugin is installed
+        if(!class_exists(PrismAPI::class)) {
+            $this->getLogger()->error("PrismAPI plugin not found. Disabling PrismArea.");
+            $this->getLogger()->error("You can download this API at https://github.com/PrismStudioMC/PrismAPI");
+            $this->getServer()->getPluginManager()->disablePlugin($this);
+            return;
+        }
+
         // Check if InvMenu plugin is installed
         if(!class_exists(InvMenuHandler::class)) {
-            $this->getLogger()->warning("InvMenu plugin not found. Please install it to use the area menu features.");
+            $this->getLogger()->error("InvMenu plugin not found. Please install it to use the area menu features.");
+            $this->getServer()->getPluginManager()->disablePlugin($this);
             return;
         }
 
@@ -69,12 +77,7 @@ class Loader extends PluginBase
         }
 
         $this->getServer()->getCommandMap()->register("area", new AreaCommand());
-        if($config->get("command-completion", true)) {
-            // Register the AreaCommand for command completion
-            new CommandListener($this);
-        }
-
-        $this->loadResourcePack();
+        ResourcePack::load(Path::join($this->getDataFolder(), "pack.zip")); // Load the resource pack
     }
 
     /**
@@ -86,29 +89,5 @@ class Loader extends PluginBase
     public function onDisable(): void
     {
         AreaManager::getInstance()->close();
-    }
-
-    private function loadResourcePack(): void
-    {
-        $manager = $this->getServer()->getResourcePackManager();
-
-        try {
-            $reflectionClass = new \ReflectionClass(ResourcePackManager::class);
-        } catch (ReflectionException $e) {
-            $this->getLogger()->error("Failed to reflect ResourcePackManager: " . $e->getMessage());
-            return;
-        }
-
-        $path = Path::join($this->getDataFolder(), "pack.zip");
-
-        try {
-            /** @var ResourcePack $pack */
-            $pack = $reflectionClass->getMethod("loadPackFromPath")->invoke($manager, $path);
-        } catch (ReflectionException $e) {
-            $this->getLogger()->error("Failed to load resource pack: " . $e->getMessage());
-            return;
-        }
-
-        $manager->setResourceStack(array_merge($manager->getResourceStack(), [$pack]));
     }
 }

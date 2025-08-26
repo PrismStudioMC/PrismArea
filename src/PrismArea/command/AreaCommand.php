@@ -16,13 +16,14 @@ use pocketmine\network\mcpe\protocol\types\command\CommandOverload;
 use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
+use PrismAPI\utils\PrismCommand;
 use PrismArea\area\Area;
 use PrismArea\area\AreaManager;
 use PrismArea\gui\AreaEditGUI;
 use PrismArea\session\SessionManager;
 use PrismArea\types\Translatable;
 
-class AreaCommand extends Command
+class AreaCommand extends PrismCommand
 {
     public function __construct()
     {
@@ -39,9 +40,9 @@ class AreaCommand extends Command
      * @param CommandEnum[]           $hardcodedEnums
      * @param CommandEnum[]           $softEnums
      * @param CommandEnumConstraint[] $enumConstraints
-     * @return null|CommandOverload[]
+     * @return CommandOverload[]
      */
-    public function buildOverloads(array &$hardcodedEnums, array &$softEnums, array &$enumConstraints) : ?array
+    public function buildOverloads(array &$hardcodedEnums, array &$softEnums, array &$enumConstraints) : array
     {
         return [
             new CommandOverload(chaining: false, parameters: [

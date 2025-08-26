@@ -3,5 +3,5 @@
 
 # Uses an additional client-side mechanism
 use-abilities: true
-command-completion: true
 send-messages: true
+

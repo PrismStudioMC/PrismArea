@@ -132,7 +132,7 @@ class Area implements \JsonSerializable
             }
 
             // Check if the player has the global permission for the flag
-            if($entity->isCreative()) {
+            if($entity->isCreative(true)) {
                 return true; // Creative players bypass area flags
             }
         }
