@@ -101,7 +101,7 @@ class Loader extends PluginBase
 
     private function loadExtensions(): void
     {
-        if(class_exists(PiggyFactions::class)) {
+        if (class_exists(PiggyFactions::class)) {
             $this->getLogger()->info("PiggyFactions detected, loading PiggyFactions integration...");
             $this->getServer()->getPluginManager()->registerEvents(new PiggyFactionsExtension(), $this);
         }

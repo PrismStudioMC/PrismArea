@@ -37,8 +37,7 @@ class BlockListener implements Listener
     public function __construct(
         protected readonly Loader      $loader,
         protected readonly AreaManager $areaManager
-    )
-    {
+    ) {
     }
 
     /**
@@ -244,7 +243,7 @@ class BlockListener implements Listener
         // Check if the area has the specified flag
         if ($flag instanceof AreaFlag && $area->hasFlag($flag)) {
             return; // Allow the block action in this area
-        } else if ($flag instanceof AreaSubFlag && $area->hasSubFlag($flag)) {
+        } elseif ($flag instanceof AreaSubFlag && $area->hasSubFlag($flag)) {
             return; // Allow the block action in this area
         }
 

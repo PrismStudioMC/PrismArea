@@ -53,8 +53,7 @@ class PlayerListener implements Listener
     public function __construct(
         protected readonly Loader      $loader,
         protected readonly AreaManager $areaManager
-    )
-    {
+    ) {
         $this->sessionManager = SessionManager::getInstance();
     }
 
@@ -89,94 +88,94 @@ class PlayerListener implements Listener
 
         switch ($action) {
             case PlayerInteractEvent::LEFT_CLICK_BLOCK:
-            {
-                // Handle left click interaction
-                if ($area->can(AreaFlag::PLAYER_BREAK, $player, $block->getPosition())) {
-                    return; // Player can perform emotes, nothing to do
-                }
+                {
+                    // Handle left click interaction
+                    if ($area->can(AreaFlag::PLAYER_BREAK, $player, $block->getPosition())) {
+                        return; // Player can perform emotes, nothing to do
+                    }
 
-                $ev->cancel();
-                break;
-            }
+                    $ev->cancel();
+                    break;
+                }
             case PlayerInteractEvent::RIGHT_CLICK_BLOCK:
-            {
-                // Handle right click interaction
-                $placedBlock = $item->getBlock();
-                if (!$placedBlock instanceof Air && !$area->can(AreaFlag::PLAYER_BUILD, $player, $block->getPosition())) {
-                    $this->sessionManager->getOrCreate($player)
-                        ->sendMessage(Translatable::PLAYER_PLACE_DENIED);
-                    $ev->cancel();
-                    return;
-                }
-
-                // Check if the area allows player interaction
-                if (!$area->can(AreaFlag::PLAYER_INTERACT, $player, $block->getPosition())) {
-                    $this->sessionManager->getOrCreate($player)
-                        ->sendMessage(Translatable::AREA_INTERACT_DENIED);
-                    $ev->cancel();
-                    return;
-                }
-
-                $map = [
-                    Axe::class => AreaSubFlag::PLAYER_INTERACT_AXE,
-                    Shovel::class => AreaSubFlag::PLAYER_INTERACT_SHOVEL,
-                    Hoe::class => AreaSubFlag::PLAYER_INTERACT_HOE,
-                    Bucket::class => AreaSubFlag::PLAYER_INTERACT_BUCKET,
-                    FlintSteel::class => AreaSubFlag::PLAYER_INTERACT_FLINT_AND_STEEL,
-                ];
-
-                // Iterate through the map to check if the item matches any class
-                foreach ($map as $class => $subFlag) {
-                    if ($item instanceof $class) {
-                        if (!$area->can($subFlag, $player, $block->getPosition())) {
-                            $this->sessionManager->getOrCreate($player)
-                                ->sendMessage(Translatable::AREA_INTERACT_DENIED);
-                            $ev->cancel();
-                        }
+                {
+                    // Handle right click interaction
+                    $placedBlock = $item->getBlock();
+                    if (!$placedBlock instanceof Air && !$area->can(AreaFlag::PLAYER_BUILD, $player, $block->getPosition())) {
+                        $this->sessionManager->getOrCreate($player)
+                            ->sendMessage(Translatable::PLAYER_PLACE_DENIED);
+                        $ev->cancel();
                         return;
                     }
-                }
 
-                // Handle right click interaction
-                $tile = $block->getPosition()->getWorld()->getTile($block->getPosition());
-                if ($tile === null) {
-                    return; // No tile found, nothing to do
-                }
-
-                if (!$tile instanceof Container) {
-                    return; // Tile is not a container, nothing to do
-                }
-
-                if (!$area->can(AreaFlag::PLAYER_CONTAINERS, $player, $block->getPosition())) {
-                    $this->sessionManager->getOrCreate($player)
-                        ->sendMessage(Translatable::PLAYER_CONTAINERS_DENIED, $block->getName());
-                    $ev->cancel();
-                    return;
-                }
-
-                $map = [
-                    Chest::class => AreaSubFlag::PLAYER_CONTAINERS_CHEST,
-                    EnderChest::class => AreaSubFlag::PLAYER_CONTAINERS_ENDER_CHEST,
-                    Furnace::class => AreaSubFlag::PLAYER_CONTAINERS_FURNACE,
-                    Barrel::class => AreaSubFlag::PLAYER_CONTAINERS_BARREL,
-                    Hopper::class => AreaSubFlag::PLAYER_CONTAINERS_HOPPER,
-                    BrewingStand::class => AreaSubFlag::PLAYER_CONTAINERS_BREWING_STAND,
-                    ShulkerBox::class => AreaSubFlag::PLAYER_CONTAINERS_SHULKER_BOX,
-                ];
-
-                // Iterate through the map to check if the item matches any class
-                foreach ($map as $class => $subFlag) {
-                    if ($item instanceof $class) {
-                        if (!$area->can($subFlag, $player, $player->getPosition())) {
-                            $this->sessionManager->getOrCreate($player)
-                                ->sendMessage(Translatable::PLAYER_CONTAINERS_DENIED, $block->getName());
-                            $ev->cancel();
-                        }
+                    // Check if the area allows player interaction
+                    if (!$area->can(AreaFlag::PLAYER_INTERACT, $player, $block->getPosition())) {
+                        $this->sessionManager->getOrCreate($player)
+                            ->sendMessage(Translatable::AREA_INTERACT_DENIED);
+                        $ev->cancel();
                         return;
                     }
+
+                    $map = [
+                        Axe::class => AreaSubFlag::PLAYER_INTERACT_AXE,
+                        Shovel::class => AreaSubFlag::PLAYER_INTERACT_SHOVEL,
+                        Hoe::class => AreaSubFlag::PLAYER_INTERACT_HOE,
+                        Bucket::class => AreaSubFlag::PLAYER_INTERACT_BUCKET,
+                        FlintSteel::class => AreaSubFlag::PLAYER_INTERACT_FLINT_AND_STEEL,
+                    ];
+
+                    // Iterate through the map to check if the item matches any class
+                    foreach ($map as $class => $subFlag) {
+                        if ($item instanceof $class) {
+                            if (!$area->can($subFlag, $player, $block->getPosition())) {
+                                $this->sessionManager->getOrCreate($player)
+                                    ->sendMessage(Translatable::AREA_INTERACT_DENIED);
+                                $ev->cancel();
+                            }
+                            return;
+                        }
+                    }
+
+                    // Handle right click interaction
+                    $tile = $block->getPosition()->getWorld()->getTile($block->getPosition());
+                    if ($tile === null) {
+                        return; // No tile found, nothing to do
+                    }
+
+                    if (!$tile instanceof Container) {
+                        return; // Tile is not a container, nothing to do
+                    }
+
+                    if (!$area->can(AreaFlag::PLAYER_CONTAINERS, $player, $block->getPosition())) {
+                        $this->sessionManager->getOrCreate($player)
+                            ->sendMessage(Translatable::PLAYER_CONTAINERS_DENIED, $block->getName());
+                        $ev->cancel();
+                        return;
+                    }
+
+                    $map = [
+                        Chest::class => AreaSubFlag::PLAYER_CONTAINERS_CHEST,
+                        EnderChest::class => AreaSubFlag::PLAYER_CONTAINERS_ENDER_CHEST,
+                        Furnace::class => AreaSubFlag::PLAYER_CONTAINERS_FURNACE,
+                        Barrel::class => AreaSubFlag::PLAYER_CONTAINERS_BARREL,
+                        Hopper::class => AreaSubFlag::PLAYER_CONTAINERS_HOPPER,
+                        BrewingStand::class => AreaSubFlag::PLAYER_CONTAINERS_BREWING_STAND,
+                        ShulkerBox::class => AreaSubFlag::PLAYER_CONTAINERS_SHULKER_BOX,
+                    ];
+
+                    // Iterate through the map to check if the item matches any class
+                    foreach ($map as $class => $subFlag) {
+                        if ($item instanceof $class) {
+                            if (!$area->can($subFlag, $player, $player->getPosition())) {
+                                $this->sessionManager->getOrCreate($player)
+                                    ->sendMessage(Translatable::PLAYER_CONTAINERS_DENIED, $block->getName());
+                                $ev->cancel();
+                            }
+                            return;
+                        }
+                    }
+                    break;
                 }
-                break;
-            }
             default: // Ignore other actions
                 break;
         }

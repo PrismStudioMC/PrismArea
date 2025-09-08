@@ -11,8 +11,7 @@ class Lang
         private string $code,
         private string $name,
         private array  $contents = []
-    )
-    {
+    ) {
     }
 
     /**

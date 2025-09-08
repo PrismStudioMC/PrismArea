@@ -11,20 +11,23 @@ use PrismArea\libs\muqsit\invmenu\session\InvMenuInfo;
 use PrismArea\libs\muqsit\invmenu\session\PlayerSession;
 use PrismArea\libs\muqsit\invmenu\type\graphic\PositionedInvMenuGraphic;
 
-final class BlockInvMenuGraphicNetworkTranslator implements InvMenuGraphicNetworkTranslator{
+final class BlockInvMenuGraphicNetworkTranslator implements InvMenuGraphicNetworkTranslator
+{
+    public static function instance(): self
+    {
+        static $instance = null;
+        return $instance ??= new self();
+    }
 
-	public static function instance() : self{
-		static $instance = null;
-		return $instance ??= new self();
-	}
+    private function __construct()
+    {
+    }
 
-	private function __construct(){
-	}
-
-	public function translate(PlayerSession $session, InvMenuInfo $current, ContainerOpenPacket $packet) : void{
-		$graphic = $current->graphic;
-		$graphic instanceof PositionedInvMenuGraphic || throw new InvalidArgumentException("Expected " . PositionedInvMenuGraphic::class . ", got " . $graphic::class);
-		$pos = $graphic->getPosition();
-		$packet->blockPosition = new BlockPosition((int) $pos->x, (int) $pos->y, (int) $pos->z);
-	}
+    public function translate(PlayerSession $session, InvMenuInfo $current, ContainerOpenPacket $packet): void
+    {
+        $graphic = $current->graphic;
+        $graphic instanceof PositionedInvMenuGraphic || throw new InvalidArgumentException("Expected " . PositionedInvMenuGraphic::class . ", got " . $graphic::class);
+        $pos = $graphic->getPosition();
+        $packet->blockPosition = new BlockPosition((int) $pos->x, (int) $pos->y, (int) $pos->z);
+    }
 }

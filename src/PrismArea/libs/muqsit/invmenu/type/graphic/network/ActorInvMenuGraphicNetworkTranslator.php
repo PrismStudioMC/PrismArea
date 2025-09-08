@@ -9,14 +9,16 @@ use pocketmine\network\mcpe\protocol\types\BlockPosition;
 use PrismArea\libs\muqsit\invmenu\session\InvMenuInfo;
 use PrismArea\libs\muqsit\invmenu\session\PlayerSession;
 
-final class ActorInvMenuGraphicNetworkTranslator implements InvMenuGraphicNetworkTranslator{
+final class ActorInvMenuGraphicNetworkTranslator implements InvMenuGraphicNetworkTranslator
+{
+    public function __construct(
+        private readonly int $actor_runtime_id
+    ) {
+    }
 
-	public function __construct(
-		readonly private int $actor_runtime_id
-	){}
-
-	public function translate(PlayerSession $session, InvMenuInfo $current, ContainerOpenPacket $packet) : void{
-		$packet->actorUniqueId = $this->actor_runtime_id;
-		$packet->blockPosition = new BlockPosition(0, 0, 0);
-	}
+    public function translate(PlayerSession $session, InvMenuInfo $current, ContainerOpenPacket $packet): void
+    {
+        $packet->actorUniqueId = $this->actor_runtime_id;
+        $packet->blockPosition = new BlockPosition(0, 0, 0);
+    }
 }

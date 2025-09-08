@@ -36,8 +36,7 @@ class AbilitiesListener
     public function __construct(
         protected readonly Loader $loader,
         private readonly int      $tick,
-    )
-    {
+    ) {
         try {
             $this->loader->getServer()->getPluginManager()->registerEvent(
                 DataPacketReceiveEvent::class,
@@ -77,7 +76,7 @@ class AbilitiesListener
 
         // Check if the origin is a player
         $player = $origin->getPlayer();
-        if ($player === null) {
+        if ($player === null || !$player->isConnected()) {
             return;
         }
 
@@ -195,7 +194,7 @@ class AbilitiesListener
 
         // Check if the origin is a player
         $player = $origin->getPlayer();
-        if ($player === null) {
+        if ($player === null || !$player->isConnected()) {
             return;
         }
 

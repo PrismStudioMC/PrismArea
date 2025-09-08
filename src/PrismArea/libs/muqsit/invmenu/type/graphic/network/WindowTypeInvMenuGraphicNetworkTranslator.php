@@ -8,13 +8,15 @@ use pocketmine\network\mcpe\protocol\ContainerOpenPacket;
 use PrismArea\libs\muqsit\invmenu\session\InvMenuInfo;
 use PrismArea\libs\muqsit\invmenu\session\PlayerSession;
 
-final class WindowTypeInvMenuGraphicNetworkTranslator implements InvMenuGraphicNetworkTranslator{
+final class WindowTypeInvMenuGraphicNetworkTranslator implements InvMenuGraphicNetworkTranslator
+{
+    public function __construct(
+        private readonly int $window_type
+    ) {
+    }
 
-	public function __construct(
-		readonly private int $window_type
-	){}
-
-	public function translate(PlayerSession $session, InvMenuInfo $current, ContainerOpenPacket $packet) : void{
-		$packet->windowType = $this->window_type;
-	}
+    public function translate(PlayerSession $session, InvMenuInfo $current, ContainerOpenPacket $packet): void
+    {
+        $packet->windowType = $this->window_type;
+    }
 }

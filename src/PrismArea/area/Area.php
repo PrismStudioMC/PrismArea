@@ -35,8 +35,7 @@ class Area implements \JsonSerializable
         private readonly AxisAlignedBB $aabb,
         private array                  $flags = [],
         private array                  $subFlags = []
-    )
-    {
+    ) {
         $manager = PermissionManager::getInstance();
         foreach (AreaFlag::cases() as $k => $name) {
             $perm = "prism.area." . strtolower($this->name) . ".flag." . strtolower($name->name);

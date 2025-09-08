@@ -13,39 +13,46 @@ use pocketmine\network\mcpe\protocol\UpdateBlockPacket;
 use pocketmine\player\Player;
 use PrismArea\libs\muqsit\invmenu\type\graphic\network\InvMenuGraphicNetworkTranslator;
 
-final class BlockInvMenuGraphic implements PositionedInvMenuGraphic{
+final class BlockInvMenuGraphic implements PositionedInvMenuGraphic
+{
+    public function __construct(
+        private readonly Block $block,
+        private readonly Vector3 $position,
+        private readonly ?InvMenuGraphicNetworkTranslator $network_translator = null,
+        private readonly int $animation_duration = 0
+    ) {
+    }
 
-	public function __construct(
-		readonly private Block $block,
-		readonly private Vector3 $position,
-		readonly private ?InvMenuGraphicNetworkTranslator $network_translator = null,
-		readonly private int $animation_duration = 0
-	){}
+    public function getPosition(): Vector3
+    {
+        return $this->position;
+    }
 
-	public function getPosition() : Vector3{
-		return $this->position;
-	}
+    public function send(Player $player, ?string $name): void
+    {
+        $player->getNetworkSession()->sendDataPacket(UpdateBlockPacket::create(BlockPosition::fromVector3($this->position), TypeConverter::getInstance()->getBlockTranslator()->internalIdToNetworkId($this->block->getStateId()), UpdateBlockPacket::FLAG_NETWORK, UpdateBlockPacket::DATA_LAYER_NORMAL));
+    }
 
-	public function send(Player $player, ?string $name) : void{
-		$player->getNetworkSession()->sendDataPacket(UpdateBlockPacket::create(BlockPosition::fromVector3($this->position), TypeConverter::getInstance()->getBlockTranslator()->internalIdToNetworkId($this->block->getStateId()), UpdateBlockPacket::FLAG_NETWORK, UpdateBlockPacket::DATA_LAYER_NORMAL));
-	}
+    public function sendInventory(Player $player, Inventory $inventory): bool
+    {
+        return $player->setCurrentWindow($inventory);
+    }
 
-	public function sendInventory(Player $player, Inventory $inventory) : bool{
-		return $player->setCurrentWindow($inventory);
-	}
+    public function remove(Player $player): void
+    {
+        $network = $player->getNetworkSession();
+        foreach ($player->getWorld()->createBlockUpdatePackets([$this->position]) as $packet) {
+            $network->sendDataPacket($packet);
+        }
+    }
 
-	public function remove(Player $player) : void{
-		$network = $player->getNetworkSession();
-		foreach($player->getWorld()->createBlockUpdatePackets([$this->position]) as $packet){
-			$network->sendDataPacket($packet);
-		}
-	}
+    public function getNetworkTranslator(): ?InvMenuGraphicNetworkTranslator
+    {
+        return $this->network_translator;
+    }
 
-	public function getNetworkTranslator() : ?InvMenuGraphicNetworkTranslator{
-		return $this->network_translator;
-	}
-
-	public function getAnimationDuration() : int{
-		return $this->animation_duration;
-	}
+    public function getAnimationDuration(): int
+    {
+        return $this->animation_duration;
+    }
 }

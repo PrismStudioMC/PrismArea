@@ -9,9 +9,9 @@ use pocketmine\player\Player;
 use PrismArea\libs\muqsit\invmenu\InvMenu;
 use PrismArea\libs\muqsit\invmenu\type\graphic\InvMenuGraphic;
 
-interface InvMenuType{
+interface InvMenuType
+{
+    public function createGraphic(InvMenu $menu, Player $player): ?InvMenuGraphic;
 
-	public function createGraphic(InvMenu $menu, Player $player) : ?InvMenuGraphic;
-
-	public function createInventory() : Inventory;
+    public function createInventory(): Inventory;
 }

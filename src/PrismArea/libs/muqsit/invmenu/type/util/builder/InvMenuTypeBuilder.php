@@ -6,7 +6,7 @@ namespace PrismArea\libs\muqsit\invmenu\type\util\builder;
 
 use PrismArea\libs\muqsit\invmenu\type\InvMenuType;
 
-interface InvMenuTypeBuilder{
-
-	public function build() : InvMenuType;
+interface InvMenuTypeBuilder
+{
+    public function build(): InvMenuType;
 }

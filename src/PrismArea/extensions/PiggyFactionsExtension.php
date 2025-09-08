@@ -59,7 +59,9 @@ class PiggyFactionsExtension extends Extension
     {
         $member = PlayerManager::getInstance()->getPlayer($player);
         $claim = ClaimsManager::getInstance()->getClaimByPosition($player->getPosition());
-        if ($claim !== null) return $member !== null && $claim->getFaction()->hasPermission($member, $type);
+        if ($claim !== null) {
+            return $member !== null && $claim->getFaction()->hasPermission($member, $type);
+        }
         return true;
     }
 }

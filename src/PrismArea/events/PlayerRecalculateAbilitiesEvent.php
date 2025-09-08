@@ -11,8 +11,7 @@ class PlayerRecalculateAbilitiesEvent extends PlayerEvent
         protected Player $player,
         protected array  $prevAbilities,
         protected array  $newAbilities,
-    )
-    {
+    ) {
     }
 
     /**

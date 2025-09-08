@@ -88,7 +88,7 @@ class LangManager
         }
 
         $split = explode('_', $langCode);
-        $values = array_filter($split, fn($part) => str_starts_with($part, array_shift($split)));
+        $values = array_filter($split, fn ($part) => str_starts_with($part, array_shift($split)));
         $fallbackCode = array_shift($values);
 
         if (isset($this->langs[strtolower($fallbackCode)])) {

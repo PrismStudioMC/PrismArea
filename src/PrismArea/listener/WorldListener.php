@@ -29,8 +29,7 @@ class WorldListener implements Listener
     public function __construct(
         protected readonly Loader      $loader,
         protected readonly AreaManager $areaManager
-    )
-    {
+    ) {
         $this->sessionManager = SessionManager::getInstance();
     }
 
@@ -61,7 +60,7 @@ class WorldListener implements Listener
                 $ev->cancel();
                 return;
             }
-        } else if (!$area->hasFlag(AreaFlag::WORLD_ATTACK_MOBS)) {
+        } elseif (!$area->hasFlag(AreaFlag::WORLD_ATTACK_MOBS)) {
             // Cancel damage to mobs if the area does not allow it
             if ($damager instanceof Player) {
                 $this->sessionManager->getOrCreate($damager)

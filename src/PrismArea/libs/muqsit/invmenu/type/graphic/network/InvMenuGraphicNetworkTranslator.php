@@ -8,7 +8,7 @@ use pocketmine\network\mcpe\protocol\ContainerOpenPacket;
 use PrismArea\libs\muqsit\invmenu\session\InvMenuInfo;
 use PrismArea\libs\muqsit\invmenu\session\PlayerSession;
 
-interface InvMenuGraphicNetworkTranslator{
-
-	public function translate(PlayerSession $session, InvMenuInfo $current, ContainerOpenPacket $packet) : void;
+interface InvMenuGraphicNetworkTranslator
+{
+    public function translate(PlayerSession $session, InvMenuInfo $current, ContainerOpenPacket $packet): void;
 }

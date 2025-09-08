@@ -43,8 +43,7 @@ class AreaEditGUI
     public function __construct(
         private Session $session,
         private Area    $area
-    )
-    {
+    ) {
         if (self::$subflagCache === []) {
             // Initialize the subflag cache only once
             $flagBases = [];
@@ -58,7 +57,9 @@ class AreaEditGUI
                 // Find the base flag for the sub-flag
                 while (!isset($flagBases[$base])) {
                     $pos = strrpos($base, '_');
-                    if ($pos === false) break;
+                    if ($pos === false) {
+                        break;
+                    }
                     $base = substr($base, 0, $pos);
                 }
                 self::$subflagCache[$base][] = $sub;
@@ -111,7 +112,7 @@ class AreaEditGUI
         $subFlag = null;
         if ($flagData !== null) {
             $flag = AreaFlag::fromString($flagData->getValue());
-        } else if ($subFlagData !== null) {
+        } elseif ($subFlagData !== null) {
             $subFlag = AreaSubFlag::fromString($subFlagData->getValue());
         }
 
@@ -124,7 +125,7 @@ class AreaEditGUI
             // If the item is not being right-clicked, we do not toggle the flag
             if ($flag !== null) {
                 $this->area->setFlag($flag, !$this->area->hasFlag($flag));
-            } else if ($subFlag !== null) {
+            } elseif ($subFlag !== null) {
                 $this->area->setSubFlag($subFlag, !$this->area->hasSubFlag($subFlag));
             }
             $this->generateInventory();
@@ -190,7 +191,8 @@ class AreaEditGUI
                     $status = $this->area->hasSubFlag($sub);
                     $subItem->getNamedTag()->setString("subflag", $sub->name);
 
-                    $inv->setItem($index++,
+                    $inv->setItem(
+                        $index++,
                         $this->buildItem(
                             $subItem,
                             self::GROUP_ITEM . $label . " " . ($status ? $on : $off),
@@ -202,7 +204,7 @@ class AreaEditGUI
         }
 
         $list = VanillaItems::BOOK()
-            ->setCustomName($lang->parse(Translatable::AREA_EDIT_GUI_LIST, implode(",\n- ", array_map(fn(Area $area) => $area->getName(), AreaManager::getInstance()->getAreas()))));
+            ->setCustomName($lang->parse(Translatable::AREA_EDIT_GUI_LIST, implode(",\n- ", array_map(fn (Area $area) => $area->getName(), AreaManager::getInstance()->getAreas()))));
 
         $inv->setItem(45, $list);
     }

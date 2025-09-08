@@ -7,7 +7,7 @@ namespace PrismArea\libs\muqsit\invmenu\session\network\handler;
 use Closure;
 use PrismArea\libs\muqsit\invmenu\session\network\NetworkStackLatencyEntry;
 
-interface PlayerNetworkHandler{
-
-	public function createNetworkStackLatencyEntry(Closure $then) : NetworkStackLatencyEntry;
+interface PlayerNetworkHandler
+{
+    public function createNetworkStackLatencyEntry(Closure $then): NetworkStackLatencyEntry;
 }

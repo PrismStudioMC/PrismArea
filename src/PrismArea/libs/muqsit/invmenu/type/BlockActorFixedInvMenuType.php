@@ -17,38 +17,43 @@ use PrismArea\libs\muqsit\invmenu\type\graphic\InvMenuGraphic;
 use PrismArea\libs\muqsit\invmenu\type\graphic\MultiBlockInvMenuGraphic;
 use PrismArea\libs\muqsit\invmenu\type\graphic\network\InvMenuGraphicNetworkTranslator;
 use PrismArea\libs\muqsit\invmenu\type\util\InvMenuTypeHelper;
+
 use function count;
 
-final class BlockActorFixedInvMenuType implements FixedInvMenuType{
+final class BlockActorFixedInvMenuType implements FixedInvMenuType
+{
+    public function __construct(
+        private readonly Block $block,
+        private readonly int $size,
+        private readonly string $tile_id,
+        private readonly ?InvMenuGraphicNetworkTranslator $network_translator = null,
+        private readonly int $animation_duration = 0
+    ) {
+    }
 
-	public function __construct(
-		readonly private Block $block,
-		readonly private int $size,
-		readonly private string $tile_id,
-		readonly private ?InvMenuGraphicNetworkTranslator $network_translator = null,
-		readonly private int $animation_duration = 0
-	){}
+    public function getSize(): int
+    {
+        return $this->size;
+    }
 
-	public function getSize() : int{
-		return $this->size;
-	}
+    public function createGraphic(InvMenu $menu, Player $player): ?InvMenuGraphic
+    {
+        $position = $player->getPosition();
+        $origin = $position->addVector(InvMenuTypeHelper::getBehindPositionOffset($player))->floor();
+        if (!InvMenuTypeHelper::isValidYCoordinate($origin->y)) {
+            return null;
+        }
 
-	public function createGraphic(InvMenu $menu, Player $player) : ?InvMenuGraphic{
-		$position = $player->getPosition();
-		$origin = $position->addVector(InvMenuTypeHelper::getBehindPositionOffset($player))->floor();
-		if(!InvMenuTypeHelper::isValidYCoordinate($origin->y)){
-			return null;
-		}
+        $graphics = [new BlockActorInvMenuGraphic($this->block, $origin, BlockActorInvMenuGraphic::createTile($this->tile_id, $menu->getName()), $this->network_translator, $this->animation_duration)];
+        foreach (InvMenuTypeHelper::findConnectedBlocks("Chest", $position->getWorld(), $origin, Facing::HORIZONTAL) as $side) {
+            $graphics[] = new BlockInvMenuGraphic(VanillaBlocks::BARRIER(), $side);
+        }
 
-		$graphics = [new BlockActorInvMenuGraphic($this->block, $origin, BlockActorInvMenuGraphic::createTile($this->tile_id, $menu->getName()), $this->network_translator, $this->animation_duration)];
-		foreach(InvMenuTypeHelper::findConnectedBlocks("Chest", $position->getWorld(), $origin, Facing::HORIZONTAL) as $side){
-			$graphics[] = new BlockInvMenuGraphic(VanillaBlocks::BARRIER(), $side);
-		}
+        return count($graphics) > 1 ? new MultiBlockInvMenuGraphic($graphics) : $graphics[0];
+    }
 
-		return count($graphics) > 1 ? new MultiBlockInvMenuGraphic($graphics) : $graphics[0];
-	}
-
-	public function createInventory() : Inventory{
-		return new InvMenuInventory($this->size);
-	}
+    public function createInventory(): Inventory
+    {
+        return new InvMenuInventory($this->size);
+    }
 }

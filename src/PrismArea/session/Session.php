@@ -39,8 +39,7 @@ class Session
 
     public function __construct(
         private Player $player,
-    )
-    {
+    ) {
         if (!$this->player->isConnected()) {
             throw new \InvalidArgumentException("Player must be connected to create a session.");
         }

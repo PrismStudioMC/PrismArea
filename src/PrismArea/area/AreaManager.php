@@ -136,7 +136,9 @@ class AreaManager
 
         // Remove the area from the areas array
         foreach ($this->getCoveredChunks($area) as $k => $chunkHash) {
-            if (!isset($this->indexedAreas[$chunkHash])) continue;
+            if (!isset($this->indexedAreas[$chunkHash])) {
+                continue;
+            }
 
             foreach ($this->indexedAreas[$chunkHash] as $i => $a) {
                 if ($a === $area || strtolower($a->getName()) === $k) {
@@ -224,7 +226,9 @@ class AreaManager
      */
     public function prioritize(Area $target, Area $ref): bool
     {
-        if ($target === $ref) return false;
+        if ($target === $ref) {
+            return false;
+        }
 
         $ordered = array_values($this->areas);
         usort($ordered, static function (Area $a, Area $b): int {
@@ -237,7 +241,7 @@ class AreaManager
 
         // Retrieve the target area from the ordered list
         /** @var Area[] $ordered */
-        $ordered = array_values(array_filter($ordered, static fn(Area $x) => $x !== $target));
+        $ordered = array_values(array_filter($ordered, static fn (Area $x) => $x !== $target));
 
         // Find the index of the reference area
         $refIndex = null;
@@ -247,7 +251,9 @@ class AreaManager
                 break;
             }
         }
-        if ($refIndex === null) return false;
+        if ($refIndex === null) {
+            return false;
+        }
 
         // Insert the target area before the reference area
         array_splice($ordered, $refIndex, 0, [$target]);
@@ -296,7 +302,9 @@ class AreaManager
      */
     private function sortChunkList(string $chunkHash): void
     {
-        if (empty($this->indexedAreas[$chunkHash])) return;
+        if (empty($this->indexedAreas[$chunkHash])) {
+            return;
+        }
 
         usort($this->indexedAreas[$chunkHash], static function (Area $a, Area $b): int {
             $pa = $a->getPriority();

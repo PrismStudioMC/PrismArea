@@ -8,8 +8,7 @@ class Extension implements Listener
 {
     public function __construct(
         protected string $name,
-    )
-    {
+    ) {
     }
 
     /**
